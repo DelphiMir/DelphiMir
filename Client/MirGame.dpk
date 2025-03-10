@@ -1,0 +1,91 @@
+package MirGame;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$IMPLICITBUILD OFF}
+
+requires
+  vcl,
+  rtl,
+  DelphiX_for7,
+  Install,
+  designide,
+  vclactnband,
+  vclx,
+  VclSmp,
+  websnap,
+  vclie,
+  RaizeComponentsVcl,
+  vcljpg,
+  webdsnap,
+  inetdb,
+  dbrtl,
+  inet,
+  xmlrtl,
+  dsnapcon,
+  dsnap;
+
+contains
+  WIL in 'WIL.pas',
+  DWinCtl in 'DWinCtl.pas',
+  cliUtil in 'cliUtil.pas',
+  HUtil32 in 'HUtil32.pas',
+  Share in 'Share.pas',
+  wmutil in 'wmutil.pas',
+  Grobal2 in '..\Common\Grobal2.pas',
+  Actor in 'Actor.pas',
+  MShare in 'MShare.pas',
+  Relationship in 'RelationShip.pas',
+  ClFunc in 'ClFunc.pas',
+  DrawScrn in 'DrawScrn.pas',
+  FState in 'FState.pas' {FrmDlg},
+  SoundUtil in 'SoundUtil.pas',
+  ClMain in 'clMain.pas' {frmMain},
+  magiceff in 'magiceff.pas',
+  PlayScn in 'PlayScn.pas',
+  IntroScn in 'IntroScn.pas',
+  FState2 in 'FState2.pas' {FrmDlg2},
+  HerbActor in 'HerbActor.pas',
+  MapUnit in 'MapUnit.pas',
+  AxeMon in 'AxeMon.pas',
+  FindMapPath in 'FindMapPath.pas',
+  clEvent in 'clEvent.pas',
+  SDK in '..\SDK\SDK.pas',
+  EDcode in '..\Common\EDcode.pas',
+  DESTR in '..\Common\DESTR.pas',
+  nixtime in '..\Common\nixtime.pas',
+  CLIParser in '..\Common\CLIParser.pas',
+  Mpeg in 'Mpeg.pas',
+  Bass in 'Bass.pas',
+  DLLLoader in '..\Common\DLLLoader.pas',
+  DLLFile in 'DLLFile.pas',
+  MyCommon in '..\MyCommon\MyCommon.pas',
+  DES in '..\Common\DES.pas',
+  DCPcrypt in '..\Common\DCPcrypt.pas',
+  Sha1 in '..\Common\Sha1.pas',
+  Base64 in '..\Common\Base64.pas',
+  DCPconst in '..\Common\DCPconst.pas',
+  ImpImePatch in 'impimepatch.pas',
+  MD5Unit in 'MD5Unit.pas';
+
+end.

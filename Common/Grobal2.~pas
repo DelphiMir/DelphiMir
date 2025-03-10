@@ -1,0 +1,4814 @@
+unit grobal2;
+
+interface
+uses
+  {svn,} Windows, SysUtils, Classes, strUtils, JSocket;
+
+const
+  {$IFDEF Timeinc}{$I TimeStamp.inc}{$ELSE}BUILDTIME = 0;{$ENDIF}
+  VERSION_NUMBER = 1009261;
+  CLIENT_VERSION_NUMBER = 120100728;
+  CM_POWERBLOCK = 0;
+
+  SM_SETITEMS = 5356;
+  SM_HINTDATA = 5357;
+
+  SM_USERMARK = 5100;   //¹®ÆÄ ¸¶Å©
+  RM_USERMARK = 30021; //¹®ÆÄ ¸¶Å©
+
+  SM_USERMASK = 5101;   //º¯½ÅÅ» ±âÆÛÁü
+  RM_USERMASK = 30022;  //º¯½ÅÅ» ±âÆÛÁü
+
+  RM_KMSendMsg = 9888;
+  SM_KMSendMsg = 9889;
+
+  //=======¿µ¹° ¿É¼Ç=======
+  CM_PETOPTION = 5163;
+  CM_PETAUTO = 5164;
+  CM_PETBANAUTO = 5165;
+  CM_PETMOUSE = 5166;
+
+  //=============º¯È¯=========
+  SM_SHOWCHANGEITEM = 5062;
+
+  SM_SHOWRANKNAME = 4162;
+
+  CM_CHANGESYSTEM = 5063;
+  SM_CHANGESYSTEMOK = 5064;
+  SM_CHANGESYSTEM_FAIL = 5065;
+
+   //³¬½Ã ¼­¹ö¿¡ ÅÛ¿äÃ»(³¬´Â)
+  CM_UPONFISH = 9040;
+  CM_UPONFISH2 = 9039;
+ // ========================
+  //¹°¾à °ü·Ã
+  SM_ADDITEM2 = 9912;
+  CM_BUNDLEITEM   = 9913;
+  CM_SEPARITEM = 9915;
+  CM_BUNDLESTORAGEITEM = 9918;
+  SM_ADDSTORAGEITEM = 9931;
+  SM_TAKEOFF_OK2 = 9032;
+
+  CM_SENDWAKEUP = 5069;
+  SM_SENDWAKEUPITEM_FAIL = 5070;
+  SM_SENDWAKEUPITEM_OK = 5071;
+  CM_SENDWAKEUPITEM = 5072;
+  RM_SENDWAKEUPITEM = 5079;
+  SM_SENDWAKEUPITEM = 5080;
+
+  CM_STORAGEPASSWORD = 1221;         //Ã¢°í¾ÏÈ£
+  CM_CHECKSTORAGEPW = 1222;           //Ã¢°í¾ÏÈ£
+
+  //»óÀÎ
+  RM_SENDGOODAPPR = 9909;
+  SM_SENDGOODAPPR = 9910;
+
+  //Àç·Ã
+  RM_OPWWAPONMG = 9916;
+  SM_OPWWAPONMG = 9917;
+  CM_GOTOITEMID = 9919;
+  RM_CORWAPONMG = 9920;
+  SM_CORWAPONMG = 9921;
+  RM_CHECKWEAPON = 9922;
+  SM_CHECKWEAPON = 9923;
+  CM_USERCHWEAPONITEM = 9924;
+  RM_USERCHECKWEAPON_FAIL = 9925;
+  SM_USERCHECKWEAPON_FAIL = 9926;
+  RM_USERCHECKWEAPON_OK = 9927;
+  SM_USERCHECKWEAPON_OK = 9928;
+  RM_USERCHECKWEAPON_UPFAIL = 9929;
+  SM_USERCHECKWEAPON_UPFAIL = 9930;
+
+  SM_SENDSNOW = 5113;     //´«¿À´ÂÀÌÆå
+
+  //====================°³ÀÎ»óÁ¡===================
+  SM_SENDSTORE = 5114;
+  CM_STARTSTORE = 5115;
+  CM_STOPSTORE = 5116;
+  CM_QUERYSTORE = 5117;
+  SM_DELSTOREITEM = 5118;
+  SM_USERSENDSTOREMSG = 5119;
+  SM_USERSTOREITEMS = 5120;
+  CM_BUYSTOREITEM = 5121;
+  SM_SENDBUYSTOREITEM_OK = 5122;
+  SM_SENDBUYSTOREITEM_FAIL = 5123;
+  SM_SENDSTARTSTORE_OK = 5124;
+  SM_SENDSTOPSTORE_OK = 5125;
+  SM_SENDSTARTSTORE_FAIL = 5126;
+  RM_SENDSTORE = 5126;
+  //===============================================
+
+  //´ë¿©============================================
+  CM_RENTALTRY            = 6000;     //´ë¿©
+  CM_RENTALADDITEM        = 6001;     //´ë¿©
+  CM_RENTALDELITEM        = 6002;     //´ë¿©
+  CM_RENTALCANCEL         = 6003;     //´ë¿©
+  CM_RENTALCHGGOLD        = 6004;     //´ë¿©
+  CM_RENTALEND            = 6005;     //´ë¿©
+
+  SM_RENTALMENU           = 6006;     //´ë¿©
+  SM_RENTALTRY_FAIL       = 6007;     //´ë¿©
+  SM_RENTALADDITEM_OK     = 6008;     //´ë¿©
+  SM_RENTALADDITEM_FAIL   = 6009;     //´ë¿©
+  SM_RENTALDELITEM_OK     = 6010;     //´ë¿©
+  SM_RENTALDELITEM_FAIL   = 6011;     //´ë¿©
+  SM_RENTALCANCEL         = 6012;     //´ë¿©
+  SM_RENTALREMOTEADDITEM  = 6013;     //´ë¿©
+  SM_RENTALREMOTEDELITEM  = 6014;     //´ë¿©
+  SM_RENTALCHGGOLD_OK     = 6015;     //´ë¿©
+  SM_RENTALCHGGOLD_FAIL   = 6016;     //´ë¿©
+  SM_RENTALREMOTECHGGOLD  = 6017;     //´ë¿©
+  SM_RENTALSUCCESS        = 6018;     //´ë¿©
+  SM_RENTALCHGDAY_OK      = 6019;     //´ë¿©
+  SM_RENTALREMOTECHGDAY   = 6020;     //´ë¿©
+  SM_RENTALCHGDAY_FAIL    = 6021;     //´ë¿©
+
+  CM_ENDRENTALITEM        = 8022;     //´ë¿©
+  CM_GETRENTAL            = 8023;     //´ë¿©
+  CM_GETRENTAL2           = 8024;     //´ë¿©
+  CM_RRENTALITEM          = 8025;     //´ë¿©
+  CM_RENTALITEM           = 10317;    //´ë¿©
+  SM_RENTALITEMS          = 2014;     //´ë¿©
+  SM_RENTALITEMS2         = 2015;     //´ë¿©
+  SM_RENTALGIVE           = 6504;     //´ë¿©
+  SM_GETRENTALITEMS_FAIL  = 7025;     //´ë¿©
+  SM_GETRENTALITEMS_FAIL2 = 7026;     //´ë¿©
+  RM_RENTALGIVE           = 11136;    //´ë¿©
+  //================================================
+  //¿µ¹°============================================
+  CM_GETPETINFO           = 8026;     //¿µ¹° Á¤º¸ ºÒ·¯¿À±â Å¬¶ó > ¼­¹ö
+  SM_GETPETINFO           = 2016;     //¿µ¹° Á¤º¸ ³Ñ±â±â ¼­¹ö > Å¬¶ó
+  SM_GETPETINFO_FAIL      = 7023;     //¿µ¹° Á¤º¸ ³Ñ±â±â ½ÇÆÐ
+  CM_DELETEPET            = 8027;     //¿µ¹° ³õ¾ÆÁÖ±â
+  CM_SUMMONPET            = 8028;     //¿µ¹° ¼ÒÈ¯ÇÏ±â
+  CM_NOTSUMMONPET         = 8029;     //¿µ¹° ¼ÒÈ¯ÇØÁ¦
+  SM_SUMMONPET            = 2017;     //¿µ¹°
+  SM_NOTSUMMONPET         = 2018;     //¿µ¹°
+  CM_CHANGPETNAME         = 8031;     //¿µ¹° ÀÌ¸§¹Ù²Ù±â
+
+  //================================================
+  //°ø¿ëÃ¢°í========================================
+  CM_ENDCOMSTORAGEITEM  = 8014;   //°ø¿ëÃ¢°í
+  CM_GETCOMSTORAGE      = 8015;   //°ø¿ëÃ¢°í
+  CM_COMSTORAGEITEM     = 10315;       //°ø¿ëÃ¢°í
+  SM_COMSTORAGEITEMS    = 2012;    //°ø¿ëÃ¢°í
+  SM_COMSTORAGEGIVE     = 6502;    //°ø¿ëÃ¢°í
+  SM_SENDUCOMSTORAGEITEM= 7002;      //°ø¿ëÃ¢°í
+  SM_COMSTORAGE_OK         = 7015;     //°ø¿ëÃ¢°í
+  SM_COMSTORAGE_FAIL       = 7016;     //°ø¿ëÃ¢°í
+  SM_GETCOMSTORAGEITEMS_FAIL = 7017;   //°ø¿ëÃ¢°í
+  SM_CLOSECOMSTORAGE       = 7018;     //°ø¿ëÃ¢°í
+  RM_COMSTORAGEGIVE    = 11134;   //°ø¿ëÃ¢°í
+  RM_USERCOMSTORAGE    = 10154;      //°ø¿ëÃ¢°í
+  //================================================
+
+  //¹®ÆÄÃ¢°í========================================
+  CM_ENDGUILDSTORAGEITEM  = 8016;   //¹®ÆÄÃ¢°í
+  CM_GETGUILDSTORAGE      = 8017;   //¹®ÆÄÃ¢°í
+  CM_GUILDSTORAGEITEM     = 10316;  //¹®ÆÄÃ¢°í
+  SM_GUILDSTORAGEITEMS    = 2013;   //¹®ÆÄÃ¢°í
+  SM_GUILDSTORAGEGIVE     = 6503;   //¹®ÆÄÃ¢°í
+  SM_SENDUGUILDSTORAGEITEM= 7003;   //¹®ÆÄÃ¢°í
+  SM_GUILDSTORAGE_OK      = 7019;   //¹®ÆÄÃ¢°í
+  SM_GUILDSTORAGE_FAIL    = 7020;   //¹®ÆÄÃ¢°í
+  SM_GETGUILDSTORAGEITEMS_FAIL = 7021;  //¹®ÆÄÃ¢°í
+  SM_CLOSEGUILDSTORAGE    = 7022;   //¹®ÆÄÃ¢°í
+  RM_GUILDTORAGEGIVE      = 11135;  //¹®ÆÄÃ¢°í
+  RM_USERGUILDSTORAGE     = 10157;  //¹®ÆÄÃ¢°í
+  //================================================
+
+  //ÂüÁø°Ý===============
+  SM_BLASTHIT = 5215;
+  RM_BLASTHIT = 30037;
+  //=======================
+  //¹öÇÁ
+  SM_BUFF   = 9812;   //¹öÇÁ
+  RM_BUFF   = 9813;  //¹öÇÁ
+
+  SM_COOLBUFF = 9025;
+  RM_COOLBUFF = 9026;
+
+  SM_COOLTIME    = 9814;  //¸®ÄÝ
+  RM_COOLTIME    = 9815;  //¸®ÄÝ
+
+  RM_ROCKPAPERS  = 9816; //°¡À§¹ÙÀ§º¸
+  SM_ROCKPAPERS  = 9817; //°¡À§¹ÙÀ§º¸
+  CM_ROCKPAPERS  = 9818;
+
+  CM_COMPOUNDITEM  = 5338;     //¾ÆÀÌÅÛÇÕ¼º
+  SM_COMPOUNDINFOS = 5363;     //¾ÆÀÌÅÛÇÕ¼º
+  SM_COMPOUNDITEM  = 5364;     //¾ÆÀÌÅÛÇÕ¼º
+  SM_COMUPDATEITEM = 5365;     //¾ÆÀÌÅÛÇÕ¼º
+
+
+  //È¯»óÁ¡ ¼±¹°
+  CM_GIFTSITEMS  = 9017;
+  CM_LIPEITEMSTR = 9018;
+  SM_GIFTSITEMS  = 9019;
+  SM_LIPEITEMCOR = 9020;
+  CM_GIFTITEMTYPE= 9021;
+  SM_GIFTITEMTYPE= 9022;
+  //È¯»óÁ¡
+  CM_LOADSHOPITEM = 9701;
+  SM_SHOPITEMLIST = 9702;
+  CM_SHOPBUYOK = 9703;
+  SM_GETSHOPITEMS_FAIL = 9704;
+  SM_SHOPITEMLIST2 = 9705;
+  CM_MYSHOPCART = 9706;
+  SM_MYSHOPCART = 9707;
+  CM_OPSHOPCART = 9708;
+  CM_DELSHOPCART = 9709;
+ {---}  //Ç÷·æ»óÀÚ
+  SM_GETDICE      = 8703;
+  SM_GETDICE_FAIL = 8704;
+  CM_DICEITEM     = 8705;
+  SM_GETDICEITEM  = 8706;
+
+  {-------------°æ¸Å-------------}
+  SM_ONAUCTION    = 8707;
+  CM_AUCADDITEM   = 8708;
+  SM_AUCUSERINFO  = 8709;
+  SM_AUC_OK       = 8710;
+  SM_AUC_FAIL     = 8711;
+  CM_AUCGET       = 8712;
+  CM_BUYAUCITEM   = 8713;
+  RM_AUCBUFF      = 8714;
+  SM_AUCBUFF      = 8715;
+
+  SM_WAKELIST     = 9700;
+
+  MapNameLen    = 16;
+  ActorNameLen  = 14;
+  GuildNameLen  = 20;
+
+
+  GSP_NOTGROUP   = 0;     //±×·ìÇã¿ë
+  GSP_GROUPCHECK = 1;     //±×·ìµ¿ÀÇ ¿©ºÎ
+  GSP_GROUPHERO  = 2;     //±×·ì¿µ¿õ
+
+  DR_UP         =0;
+  DR_UPRIGHT    =1;
+  DR_RIGHT      =2;
+  DR_DOWNRIGHT  =3;
+  DR_DOWN       =4;
+  DR_DOWNLEFT   =5;
+  DR_LEFT       =6;
+  DR_UPLEFT     =7;
+
+  U_DRESS       = 0;
+  U_WEAPON      = 1;
+  U_RIGHTHAND   = 2;    //¾çÃÊ , È¶ºÒ
+  U_NECKLACE    = 3;
+  U_HELMET      = 4;
+  U_ARMRINGL    = 5;
+  U_ARMRINGR    = 6;
+  U_RINGL       = 7;
+  U_RINGR       = 8;
+  U_BUJUK       = 9;
+  U_BELT        = 10;
+  U_BOOTS       = 11;
+  U_CHARM       = 12;
+  U_TIGER       = 13;
+
+  U_PETS1       = 14;        //È£¶ûÀÌ
+  U_PETS2       = 15;
+  U_PETS3       = 16;
+  U_PETS4       = 17;
+  U_PETS5       = 18;
+
+  U_FISH1       = 19;      //³¬½Ã
+  U_FISH2       = 20;
+  U_FISH3       = 21;
+  U_FISH4       = 22;
+  U_FISH5       = 23;
+
+
+  DEFBLOCKSIZE  = 16;
+  BUFFERSIZE    = 30000;//12000;   //»çÀÌÁî¿ÀºêÈÞ¸Õ
+  DATABUFFERSIZE = 20000;
+
+  LOGICALMAPUNIT= 40;
+
+  UNITX         = 48;
+ // UNITY         = 32;
+
+  HALFX         = 24;
+  HALFY         = 16;
+
+  MAXUSEITEM    = 24; //¼öÁ¤
+  MAXHEROUSEITEM = 13;
+  MAXBAGITEM    = 46;
+  MAXHEROBAGITEM = 42; //¿µ¿õ°¡¹æ
+  STORAGELIMIT  = 80;         //Ã¢°í
+  HOWMANYMAGICS = 35;    //¸¶¹ý ¹è¿ì´Â °¹¼ö
+  MaxSkillLevel = 3;
+  MAX_STATUS_ATTRIBUTE = 30;  //½ºÅ×ÀÌÆ® Áõ°¡
+  EXTRAABIL_SIZE = 8;
+
+  SAYLISTHEIGHT = 12; //ÁÄÌì¿ò¸ß¶È
+  FACESHOWCOUNT = 10; //±íÇéÁÐ±íÃ¿ÐÐÏÔÊ¾ÊýÁ¿
+  SAYFACEWIDTH = 20; //ÁÄÌì¿ò±íÇé¿í¶È
+
+  HUMANUSEITEMS = 15;
+  HUMITEMS 	= 15;
+
+  ITEM_WEAPON           = 0;
+  ITEM_ARMOR				    = 1;
+  ITEM_ACCESSORY		    = 2;
+  ITEM_HELMET   		    = 3;
+  ITEM_ETC					    = 4;
+  ITEM_GOLD				      = 10;
+  ITEM_UPGRADE          = 5;
+
+  POISON_DECHEALTH       = 0;             //80000000 µ¥¹ÌÁö µ¶   (³ì»ö)  //64h
+  POISON_DAMAGEARMOR     = 1;             //40000000 ¹æ¾îÇÏ¶ô µ¶ (»¡°­)    //66h
+  POISON_FREEZE          = 2;             //20000000 µÐÈ­
+  POISON_STUN            = 3;             //10000000 ½ºÅÏ
+  POISON_SLOWDOWN        = 4;             //08000000 ´À¸®°Ô µÐÈ­
+  POISON_STONE           = 5;             //04000000 ¸¶ºñ
+                                          //02000000 ¹Ì»ç¿ë
+  STATE_SUNCHENDEFENCEUP = 7;             //01000000 ¼±Ãµ±â°ø
+  STATE_TRANSPARENT      = 8;             //00800000 Àº½Å
+  STATE_DEFENCEUP        = 9;             //00400000 Ç×¸¶
+  STATE_MAGDEFENCEUP     = 10;            //00200000 ´ëÁö
+  STATE_BUBBLEDEFENCEUP  = 11;            //00100000 ÁÖ¼úÀÇ¸·
+  STATE_FISHING          = 12;            //00080000 ³¬½Ã
+  STATE_SKYSWORD         = 13;            //00040000 Ãµ»óºñ¼ú
+  POISON_HEMORRHAGE      = 14;            //00020000 Ç÷Ç³°Ý µ¶
+  STATE_MAGICUP          = 15;            //00010000 ½É¿¬¼ú
+  STATE_SPEEDRUN         = 16;            //00008000 °æ½Åº¸
+  STATE_ASSTRANSPARENT   = 17;            //00004000 ¿ù¿µ¼ú
+  STATE_BLOODSWORD       = 18;            //00002000 Ç÷·æ°Ë¹ý
+  STATE_PROTECTSHIELD    = 19;            //00001000 È£½Å°­±â
+  STATE_BLOODWATER       = 20;            //00000800 Ç÷·æ¼ö
+  STATE_THUNDERWAVE      = 21;            //00000400 º¹È£Àå
+  STATE_PENETRATE        = 22;            //00000200 ¸ÁÀÚÀÇ¿Ê
+  STATE_KUMGANG          = 23;            //00000100 ±Ý°­ºÒ±«
+  STATE_YEONGMU          = 24;            //00000080 ¿ù¿µ¹«
+  STATE_WINDMOON         = 25;            //00000040 Ã»Ç³¸í¿ù
+  STATE_BLOODMOON        = 26;            //00000020 ÀûÇ÷¹«¿µ
+  POISON_THUNDER         = 27;            //00000010 º¹È£Àå °­È­
+
+  STATE_NORMAL           = $00000000;
+  STATE_STONE_MODE       = $00000001;
+  STATE_OPENHEATH        = $00000002;
+
+  EABIL_DCUP       = 0;   //¼ø°£ÀûÀ¸·Î ÆÄ±«·ÂÀ» ¿Ã¸² (ÀÏÁ¤ ½Ã°£)
+  EABIL_MCUP       = 1;
+  EABIL_SCUP       = 2;
+  EABIL_HITSPEEDUP = 3;
+  EABIL_HPUP       = 4;
+  EABIL_MPUP       = 5;
+  EABIL_PWRRATE    = 6;   // °ø°Ý·Â ·¹ÀÌÆ® Á¶Á¤
+  EABIL_DCRATE     = 7;  //±Ý°­ºÒ±«
+
+  ET_DIGOUTZOMBI    = 1;  //Á»ºñ
+  ET_MINE           = 2;  //±¤»ê
+  ET_PILESTONES     = 3;  //µ¹¹«´õ±â
+  ET_HOLYCURTAIN    = 4;  //°á°è
+  ET_FIRE           = 5;  //Áö¿°¼ú
+  ET_SCULPEICE      = 6;  //ÁÖ¸¶¿Õ
+  ET_POISONCLOUD    = 7;  //µ¶¹«
+  ET_POBAK          = 8;  //Æ÷¹Ú
+  ET_ALLFIRE        = 9;  //¸¸Ãµ¿°¿Á
+  ET_OHAENG         = 10; //À½¾ç¿ÀÇàÁø
+  ET_NONE           = 11; //±âº»
+  ET_FIREUP         = 12; //Áö¿°¼ú °­È­
+  ET_UPPOISONCLOUD  = 13; //µ¶¹« °­È­
+  ET_ALLTHUNDER     = 14; //¿îÁß·Ú°Ý
+  ET_MAGICLOCK      = 15;
+  ET_THUNDERWAVE    = 16; //º¹È£Àå
+  ET_CHUNGONG       = 17; //Ãµ°ø
+  ET_DRAGON         = 18; //¿ë¼ÚÀ½
+  ET_MAHUL          = 19; //¸¶Ç÷³­¹«
+
+  NE_CLONESHOW      = 2;
+  NE_CLONEHIDE      = 3; //ºÐ½Å
+  NE_RELIVE         = 14; //¼Ò»ý ÀÌÆÑÆ®
+
+  NE_MANAEATERS     = 29;  //Èí±âº»ÀÎ
+  NE_HEMORRHAGE     = 31;  //Ç÷Ç³°Ý
+  NE_TICKHEMORRHAGE = 32; //Ç÷Ç³°Ý
+  NE_DARKCLONEHIDE  = 33; //¿­È­½Å
+  NE_MANAEATERT     = 47;  //Èí±âÅ¸°Ù
+  NE_REVIVALCHARGE  = 47; //¼Ò»ý¼ú
+  NE_ILSUM          = 54; //ÀÏ¼¶
+  NE_UPILSUM        = 55; //ÀÏ¼¶°­È­
+  NE_MAILSUM        = 56; //¸¶Ç÷±¤¼¶
+  NE_HWECHUN_1      = 57; //È¸Ãµ°Ý1
+  NE_HWECHUN_2      = 58; //È¸Ãµ°Ý2
+  NE_DRAGON_1       = 80; //¿ë¼ÚÀ½
+  NE_DRAGON_2       = 81; //¿ë¼ÚÀ½
+  NE_DRAGON_3       = 128; //¿ë¼ÚÀ½
+  NE_LEVELUP        = 13; //·¹º§¾÷ ÀÌÆåÆ®
+
+  NE_THUNDERHAGE    = 76; //º¹È£Àå
+
+  NE_THUNDERDOWN    = 78; //³«Ãµ·Ú
+  NE_KINGSTONE_RECALL_1  = 100; //ºñ¿ùÃµÁÖ ¼ÒÈ¯ ºñ¿ùÃµÁÖ¿¡°Ô »Ñ·ÁÁÜ
+  NE_KINGSTONE_RECALL_2  = 101; //ºñ¿ùÃµÁÖ ¼ÒÈ¯ Ä³¸¯¿¡°Ô »Ñ·ÁÁÜ
+  NE_POISONFOG      = 102; //ÀÌ¹«±â µ¶¾È°³ ÀÓÆåÆ®
+  NE_SN_MOVEHIDE    = 103; //ÀÌ¹«±â ¿öÇÁ »ç¶óÁö´ÂÀÓÆåÆ®
+  NE_SN_MOVESHOW    = 104; //ÀÌ¹«±â ¿öÇÁ ³ªÅ¸³ª´ÂÀÓÆåÆ®
+  NE_SN_RELIVE      = 105; //ÀÌ¹«±â ºÎÈ° ÀÓÆåÆ®
+  NE_KINGTURTLE_MOBSHOW  = 106; //Çö¹«Çö½Å ¼ÒÈ¯¸÷ ³ªÅ¸³ª´ÂÀÓÆåÆ®
+  NE_OMAKING        = 107; //ÆÄÈ²¸¶½Å
+  NE_FOX_MOVESHOW   = 109; //ºñ¿ù¿©¿ì ¼ÒÈ¯
+  NE_GOLD_MOVESHOW  = 110; //È¯»ç¸÷ ¼ÒÈ¯
+  NE_SOULSTONE_HIT  = 111; //È£È¥¼®
+
+  NE_THUNDER        = 114;  //¿ë´øÁ¯ ¹ø°³        //¸¶·æ¹ø°³
+  NE_FIRE           = 115;  //¿ë´øÁ¯ ¿ë¾Ï       //¸¶·æ¹ø°³
+  NE_USERHEALING    = 116;  //NPC Èú¸µ
+
+  NE_SURA           = 82;  //¼ö¶óÃµ¸êÁø
+  NE_FIRECIRCLE     = 112;  //È­·æ±â¿°
+
+  NE_CLOUD          = 129; //¾Ïµ¶¸¸°è
+  NE_FIRECIRCLEUP   = 133;  //È­·æ±â¿° °­È­
+  NE_MONCAPTURE     = 9;  //Æ÷½Â°Ë-Æ÷È¹ ÀÌÆåÆ®
+  NE_ICECIRCLE      = 136; //ºù¿ù°Ý
+  NE_THUNDERCIRCLE  = 138; //³ú½ÅÇ÷
+  NE_THUNDERCIRCLE2 = 139; //³ú½ÅÇ÷
+  NE_KYO            = 140; //±³¾Ç
+  NE_SINGI          = 141; //½Å±â¹¦»ê
+
+  NE_THUNDER2       = 142;  //¿ë´øÁ¯ ¹ø°³
+
+  NE_Enchant_Good   = 176; //°¢¼º ¼º°ø
+  NE_Enchant_Fail   = 177; //°¢¼º ½ÇÆÐ
+  NE_Hammer_Good    = 178; //¸ÁÄ¡
+  NE_Hammer_Miss    = 179; //¸ÁÄ¡
+
+  NE_Enchant_Good1  = 180; //°¢¼º ¼º°ø
+  NE_Enchant_Fail1  = 181; //°¢¼º ½ÇÆÐ
+  NE_Hammer_Good1   = 182; //¸ÁÄ¡
+  NE_Hammer_Miss1   = 183; //¸ÁÄ¡
+
+  NE_CHUNMU         = 184; //Ãµ¹«
+  NE_STRUCKCHUNMU   = 185; //Ãµ¹«¹Ý°Ý
+
+  NE_GUKDEA         = 187; //±¹´ëÀÀ¿øº¹ 
+
+  NE_GoStop1        = 188; //ºñ±¤ÀÇÅ»
+  NE_GoStop2        = 189;
+  NE_GoStop3        = 190;
+  NE_GoStop4        = 191;
+  NE_GoStop5        = 192;
+  NE_GoStop         = 193;
+  NE_GoStop6        = 194;
+
+  NE_OMAJESA        = 195;
+  NE_GUSLE1         = 196;
+  NE_GSLE2S         = 197;
+  NE_GUUSLE3T       = 198;
+
+  NE_OMADRAKKINH    = 199;
+  NE_NOSEMONKEY1    = 200; //±äÄÚ¿ø¼þÀÌ
+  NE_NOSEMONKEY2    = 201; //±äÄÚ¿ø¼þÀÌ
+  NE_GUJANGWHA      = 202; //°ÅÀåÈ­
+
+  NE_ICEKING1       = 210; //¼³ÅÂ¶û
+  NE_ICEKING2       = 211; //¼³ÅÂ¶û
+
+  NE_GHOSTFIRE      = 226; //È¥ºÒ
+  NE_DARK_RECALL    = 233; //¾ÏÈæ¼±Àå
+
+  NE_BIG_SNAKE      = 234; //´ë¸Á
+  NE_JUMAWIZARD     = 235; //ÁÖ¸¶¼ú»ç
+  NE_JUMAWIND       = 236; //ÁÖ¸¶Ç³±Ã»ç
+  NE_SANDWIND       = 237; //¸ð·¡ÆøÇ³
+
+  NE_SPIDERBOSS     = 30; //¿ùÁö°Å¹ÌÁÙ
+
+  NE_ICEDEVIL      = 250; //¾Ç±Í ÀÚÆø
+
+  NE_BONZECLONE    = 251; //ÀºÇü¼ú
+  NE_JUCJSAL       = 252; //ÃµÀÎÀû»ìÇ³
+  NE_FAHANGBO      = 253; //ÆÄÈ²º¸
+
+  NE_BEAR_LIGHITING = 254; //°õ ¶óÀÌÆ®´× °ø°Ý
+
+  RCC_MERCHANT     = 50;
+  RCC_GUARD        = 12;
+  RCC_USERHUMAN    = 0;
+
+  F_GOOD = 0;
+  F_BAD  = 1;
+
+  Q_QUEST = 0;
+  Q_STORY  = 1;
+
+
+  HAM_ALL      = 0;
+  HAM_PEACE    = 1;
+  HAM_GROUP    = 2;
+  HAM_GUILD    = 3;
+  HAM_ENEMY    = 4;
+  HAM_PKATTACK = 5;
+
+  CM_QUERYUSERSTATE     = 82;
+
+  CM_QUERYUSERNAME      = 80;
+  CM_QUERYBAGITEMS      = 81;
+  CM_QUERYSTORAGEITEMS  = 83;
+
+  CM_QUERYGUILDGROW     = 84; //¹®ÆÄ¼ºÀå
+
+  CM_GETAUCTION         = 8011;
+  CM_BUYAUCTIONITEM     = 8012;
+  CM_GETGOLDITEM        = 8013;
+
+  CM_GETSTORAGE         = 8019;  //ÀÌµ¿¿©°ü
+
+  CM_QUERYCHR           = 100;
+  CM_NEWCHR             = 101;
+  CM_DELCHR             = 102;
+  CM_SELCHR             = 103;
+  CM_SELECTSERVER       = 104;
+
+  CM_ALIVE = 117;
+  CM_VIEWDELHUM = 114;
+  CM_RENEWHUM = 115;
+
+  CM_GETTOPINFO         = 130;
+  
+  CM_OPENDOOR           = 1002;
+  CM_SOFTCLOSE          = 1009;
+
+  CM_DROPITEM           = 1000;     //¾ÆÀÌÅÛ ¹ö¸²
+  CM_PICKUP             = 1001;
+  CM_TAKEONITEM		      = 1003;
+  CM_TAKEOFFITEM        = 1004;
+  CM_1005               = 1005;
+  CM_EAT                = 1006;
+  CM_BUTCH              = 1007;
+  CM_MAGICKEYCHANGE	    = 1008;
+  CM_CHECKMSG           = 1092;
+
+  CM_CLICKNPC           = 1010;
+  CM_MERCHANTDLGSELECT  = 1011;
+  CM_MERCHANTQUERYSELLPRICE = 1012;
+  CM_USERSELLITEM       = 1013;
+  CM_USERBUYITEM        = 1014;
+  CM_USERPBUYITEM       = 1015;
+  CM_DROPGOLD           = 1016;
+  CM_1017               = 1017;
+  CM_LOGINNOTICEOK      = 1018;
+  CM_GROUPMODE          = 1019;    //±×·ì ¸ðµå
+  CM_CREATEGROUP        = 1020;    //±×·ì °á¼º
+  CM_ADDGROUPMEMBER     = 1021;     //±×·ì¿ø Ãß°¡
+  CM_DELGROUPMEMBER     = 1022;     //±×·ì¿ø »èÁ¦
+  CM_USERREPAIRITEM     = 1023;
+  CM_MERCHANTQUERYREPAIRCOST = 1024;
+  CM_DEALTRY            = 1025;        //°Å·¡
+  CM_DEALADDITEM        = 1026;         //°Å·¡
+  CM_DEALDELITEM        = 1027;          //°Å·¡
+  CM_DEALCANCEL         = 1028;          //°Å·¡
+  CM_DEALCHGGOLD        = 1029;          //°Å·¡
+  CM_DEALEND            = 1030;          //°Å·¡
+  CM_USERSTORAGEITEM    = 1031;
+  CM_CONSIGNITEM        = 10311;       //À§Å¹
+  CM_USERTAKEBACKSTORAGEITEM = 1032;
+  CM_TIGERSET           = 1033; //È£¶ûÀÌ
+  CM_LOGINNOTICEOK_EX   = 1034;
+  CM_OPENGUILDDLG       = 1035;
+  CM_GUILDHOME          = 1036;
+  CM_GUILDMEMBERLIST    = 1037;
+  CM_GUILDADDMEMBER     = 1038;
+  CM_GUILDDELMEMBER     = 1039;
+  CM_GUILDUPDATENOTICE  = 1040;
+  CM_GUILDUPDATERANKINFO= 1041;
+
+  CM_ADJUST_BONUS       = 1043;
+  CM_GUILDALLY          = 1044;
+  CM_GUILDBREAKALLY     = 1045;
+
+  CM_EXCHGGOLD          = 1052;   //È¯Àü
+  CM_EXCHGAMEGGOLD      = 1053;   //È¯Àü
+  CM_EXCANCEL           = 1054;   //È¯Àü Ãë¼Ò
+  CM_EXCHANGEEND        = 1055;   //È¯Àü ¿Ï·á
+  CM_EXCHGAMERATE       = 1056;   //È¯Àü ½Ã¼¼
+
+  CM_USERITEMLOCK = 1060;
+
+  CM_USERITEMWAKE = 1061;
+  CM_USERITEMRESTORE = 1162;
+
+  CM_GETSAYITEM = 94;
+  CM_FRIEND_CHENGE = 96;
+  CM_SPEEDHACKUSER      = 10430;
+
+  CM_DEALDELITEM2       = 1050;         //°Å·¡
+
+  CM_MERCHANTQUERYWAKECOST = 1157;
+  CM_MERCHANTQUERYRESTORECOST = 1158;
+
+  CM_GUILDSET           = 1051;    //¹®ÆÄ ¸¶Å©
+  CM_GUILDGROWUP        = 1057;    //¹®ÆÄ¼ºÀå
+
+  CM_UPGRADEITEM        = 1063;  // ¾ÆÀÌÅÛ ¾÷±×·¹ÀÌµå ¿äÃ»      //½ºÃÄ
+  CM_USERMAKEITEMSEL    = 1065;      //Á¦Á¶½ºÃÄ
+  CM_USERMAKEITEM       = 1066;      //Á¦Á¶½ºÃÄ
+  CM_ALIVE_OK           = 1998;  //¼Ò»ýÈ®ÀÎ
+
+  CM_PRICEDISASSEMBLE   = 1067;  //°¢¼ººÐÇØ°¡°Ý
+  CM_DISASSEMBLE        = 1068;  //°¢¼ººÐÇØ
+
+  CM_ITEMWAKEUP         = 1070;  //°¢¼º
+
+  CM_PRICEDISMANTLEBLE  = 1071;  //ÀÏ¹ÝºÐÇØ°¡°Ý
+  CM_DISMANTLE          = 1072;  //ÀÏ¹ÝºÐÇØ
+
+
+  CM_PROTOCOL           = 2000;
+  CM_IDPASSWORD         = 2001;
+  CM_ADDNEWUSER         = 2002;
+  CM_CHANGEPASSWORD     = 2003;
+  CM_UPDATEUSER         = 2004;
+
+  CM_TURN               = 3010;
+  CM_WALK               = 3011;
+  CM_SITDOWN            = 3012;
+  CM_RUN                = 3013;
+  CM_HITLEFT            = 3014;  //¿ÞÂÊ
+  CM_HIT                = 3015;
+  CM_HEAVYHIT           = 3016;
+  CM_BIGHIT             = 3017;
+  CM_SPELL              = 3064;
+  CM_POWERHIT           = 3018;
+  CM_LONGHIT            = 3019;
+  CM_TAGUHIT            = 3065;   //Å¸±¸ºÀ¹ý
+  CM_DEATHHIT           = 3037;  //»ì»ýµµ
+  CM_WBHIT              = 3087;   //Ç³°Ë¼ú
+  CM_WBHIT2             = 3090;    //Ç³°Ë¼ú
+  CM_SPEEDRUN           = 3092;  //°æ½Åº¸
+
+  CM_WIDEHIT            = 3024;
+  CM_FIREHIT            = 3025;
+
+  CM_SAY                = 3030;
+
+  CM_GEMITEM            = 3031; //º¸¿Á(±¸ ½Ã½ºÅÛ)
+
+  //Ä£±¸
+  CM_REQUESTFRIENDLIST  = 3046;
+  //ÂÊÁö
+  CM_MAIL_LIST          = 3050;
+  CM_MAIL_ADD           = 3051;
+  CM_MAIL_SETINFO       = 3052;
+  CM_MAIL_DELETE        = 3053;
+
+  CM_REJECT_LIST        = 3055;
+  CM_REJECT_ADD         = 3056;
+  CM_REJECT_DELETE      = 3057;
+
+  //¿¬ÀÎ ½ºÃÄ
+  CM_LM_OPTION = 1058;  // °ü°è È°¼º / ºñÈ°¼º
+  CM_LM_REQUEST = 1059;  // °ü°è µî·Ï ¿äÃ»
+  CM_LM_DELETE = 1062;  // °ü°è ÆÄ±â
+
+  CM_LM_DELETE_REQ_OK   = 1088;  // °ü°è ÆÄ±â OK
+  CM_LM_DELETE_REQ_FAIL = 1089;  // °ü°è ÆÄ±â FAIL
+
+  CM_CANCLOSE           = 1101;
+
+  CM_REQUESTRELAYOK     = 3070;
+  CM_REQUESTRELAYFAIL   = 3071;
+
+  CM_REQUESTGTLIST      =3072;
+  CM_BUYGT              =3073;
+  CM_REQUESTDECOLIST    =3074;
+  CM_BUYDECOITEM        =3075;
+  CM_TRADEGT            =3076;
+  CM_BBSLIST            =3077;       //Àå¿ø°Ô½ÃÆÇ
+  CM_BBSMSG             =3078;      //Àå¿ø°Ô½ÃÆÇ
+  CM_BBSPOST            =3079;       //Àå¿ø°Ô½ÃÆÇ
+  CM_BBSDELETE          =3080;      //Àå¿ø°Ô½ÃÆÇ
+
+
+  //»çÁ¦ ½ºÃÄ
+  CM_ME_REQUEST         = 3083;
+  CM_ME_DELETE          = 3084;
+
+  CM_FISHING1           =3098;    //³¬½Ã
+  CM_FISHING2           =3099;    //³¬½Ã
+
+  SM_RUSH               = 6;
+  SM_RUSHKUNG           = 7;
+  SM_FIREHIT            = 8;
+  SM_BACKSTEP           = 9;
+  SM_TURN               = 10;
+  SM_WALK               = 11;
+  SM_SITDOWN            = 12;
+  SM_RUN                = 13;
+  SM_HITLEFT            = 14; //¿ÞÂÊ
+  SM_HIT                = 15;      //¿À¸¥ÂÊ
+  SM_HEAVYHIT           = 16;
+  SM_BIGHIT             = 17;
+  SM_SPELL              = 64;
+  SM_POWERHIT           = 18;
+  SM_LONGHIT            = 19;
+  SM_DIGUP              = 20;
+  SM_DIGDOWN            = 21;
+  SM_FLYAXE             = 22;
+  SM_LIGHTING           = 23;
+  SM_WIDEHIT            = 24;
+  SM_CRSHIT             = 25;   //±¤Ç³Âü
+  SM_TWINHIT            = 26;
+  SM_BOW                = 39;
+  SM_DEATHHIT           = 37;     //»ì»ýµµ
+  SM_WBHIT              = 87;    //Ç³°Ë¼ú
+  SM_WBHIT2             = 90;    //Ç³°Ë¼ú
+  SM_BALDO              = 93; //¹ßµµ¼ú
+  SM_DOWN               = 91; //¿ù¿µ¼ú
+  SM_SPEEDRUN           = 92; //°æ½Åº¸
+  SM_DOWNRUN            = 89; //¿ù¿µ¼ú
+  SM_BALDO2             = 94; //¹ßµµ¼ú
+  SM_LIGHTING_1         = 95; //¸¶¹ý_1:ÀÌ¹«±â ¸êÃµÈ­
+  SM_LIGHTING_2         = 96;
+  SM_LIGHTING_3         = 97;
+  SM_FISHING1           = 98; //³¬½Ã ½ÃÀÛ
+  SM_FISHING2           = 99;  //³¬½Ã ³¡
+  SM_LIGHTING_4         = 300;
+  SM_LIGHTING_5         = 301;
+  SM_LIGHTING_6         = 302;
+  SM_LIGHTING_7         = 303;
+  SM_CPOWERHIT          = 304;
+  SM_CFIREHIT           = 305;
+  SM_TAGUHIT            = 306;
+  SM_THUNDERHIT         = 307;//³ú·æºÀ¹ý
+  SM_FIRESHAOLIN        = 308;//ÃµÈ­ºÀ¹ý
+
+  SM_MAGICMOVE          = 309;
+  SM_CRBHIT             = 310;  //È¸Ç³ÃµºÀ¹ý - µµ»ç
+  SM_NANCRSHIT          = 311;  //³­È­Ç÷Ç³Âü
+
+   MAGIC_OLDKING_ATT1_1  = 60;     //°í´ë¼öÈ£Àå
+   MAGIC_OLDKING_ATT1_2  = 61;     //°í´ë¼öÈ£Àå
+   MAGIC_ICEKING_ATT1_1  = 62;     //ÇÑºù¼öÈ£±Í
+   MAGIC_ICEKING_ATT1_2  = 63;     //ÇÑºù¼öÈ£±Í
+   MAGIC_ICEKING_ATT1_3  = 64;     //ÇÑºù¼öÈ£±Í
+   MAGIC_ICEKING_ATT1_4  = 65;     //ÇÑºù¼öÈ£±Í
+
+   MAGIC_TEGU_ATT        = 202;     //ÅÂ±¸¿À¸¶
+   MAGIC_JUCK_ATT        = 203;     //¿À¸¶Àûº´
+   MAGIC_GHOST_ATT       = 228;     //¼±¹ÚÀÇ¾Ç·É
+   MAGIC_FRAM_NO_ATT     = 229;     //³ó³ë±º
+   MAGIC_BIG_SNAKE       = 230;     //´ë¸Á
+   MAGIC_JUMAFIREARC1    = 231;     //ÁÖ¸¶È­±Ã»ç
+   MAGIC_JUMAFIREARC2    = 232;     //ÁÖ¸¶È­±Ã»ç
+   MAGIC_JUMAWIND        = 233;     //ÁÖ¸¶Ç³±Ã»ç
+
+   MAGIC_ARCHER_ATT1     = 234;     //À¯»ó±ÃÀå1
+   MAGIC_ARCHER_ATT2     = 235;     //À¯»ó±ÃÀå1
+   MAGIC_ARCHER_ATT3     = 236;     //À¯»ó±ÃÀå1
+
+   MAGIC_ICEARC          = 237; //ºù¿ø±Í±Ã»ç
+   // FireDragon ------------------------ by Leekg...2003/11/27
+
+   MAGIC_DUN_THUNDER       = 70; //¿ë´øÁ¯ ¹ø°³//¸¶·æ¹ø°³
+   MAGIC_DUN_FIRE1         = 71; //¿ë´øÁ¯ ¿ë¾Ï µ¢¾î¸®     //¸¶·æ¹ø°³
+   MAGIC_DUN_FIRE2         = 72; //¿ë´øÁ¯ ¿ë¾Ï ÀÓÆåÆ®     //¸¶·æ¹ø°³
+   MAGIC_DRAGONFIRE        = 73; //¿ëºÒ°ø°Ý ÅÍÁü    //¸¶·æ¹ø°³
+   MAGIC_FIREBURN          = 74; //¿ë¼®»ó°ø°Ý ÅÍÁü Å¸¿À¸§
+   MAGIC_DUN_THUNDER2      = 75;
+
+   MAGIC_FOX_THUNDER       = 78; //¼ú»çºñ¿ù¿©¿ì °­°Ý //ºñ¿ùÀûÈ£
+   MAGIC_FOX_FIRE1         = 79; //¼ú»çºñ¿ù¿©¿ì È­¿°
+   MAGIC_DARK_THUNDER      = 80; //ÈæÃµ±Í °ø°Ý
+   MAGIC_EXPLOSIN          = 81; //Æø¸¶¾ßÂ÷
+   MAGIC_FIREEXPLOSIN      = 82; //¿­ÀåÀû±Í
+   MAGIC_SIDEARMS          = 83; //ÆÐ°ËÀû±Í
+   MAGIC_DAGGER            = 84; //µ¶ÀÎÀû±Í
+
+   MAGIC_ICEGUARD          = 85; //°ßºù¼öÈ£Àå
+   MAGIC_MAGICGUARD        = 86; //¸¶¿°¼öÈ£Àå
+   MAGIC_DARKGUARD         = 87; //¾ÏÈ¥¼öÈ£Àå
+   MAGIC_POWERGUARD        = 88; //¿­Áø¼öÈ£Àå
+
+   MAGIC_HAMMERCAT         = 89; //¾ó·è¸ÁÄ¡±ªÀÌ
+
+   MAGIC_FOX_FIRE2         = 90; //µµ»çºñ¿ù¿©¿ì Æø»ì°è
+   MAGIC_FOX_CURSE         = 91; //µµ»çºñ¿ù¿©¿ì ÀúÁÖ¼ú
+   MAGIC_SOULBALL_ATT1     = 93; //ºñ¿ùÃµÁÖ Àü±â °ø°Ý(±ÙÁ¢¹üÀ§)
+   MAGIC_SOULBALL_ATT2     = 94; //ºñ¿ùÃµÁÖ Àü±â °ø°Ý(¿ø°Å¸®)
+   MAGIC_SOULBALL_ATT3_1   = 95; //ºñ¿ùÃµÁÖ Àü±â °ø°Ý(ÇÊ»ç±â) 5°¡Áö ÀÓÆåÆ®
+   MAGIC_SOULBALL_ATT3_2   = 96;
+   MAGIC_SOULBALL_ATT3_3   = 97;
+   MAGIC_SOULBALL_ATT3_4   = 98;
+   MAGIC_SOULBALL_ATT3_5   = 99;
+   MAGIC_SERPENT_1         = 100; //ÀÌ¹«±â ¸êÃµÈ­
+
+   MAGIC_TURTLE_WARTERATT  = 101; //°©Ã¶±Í¼ö ¹°°ø°Ý
+   MAGIC_KINGTURTLE_ATT1   = 102; //Çö¹«Çö½Å-Èú¸µ
+   MAGIC_KINGTURTLE_ATT2_1 = 103; //Çö¹«Çö½Å-ÀüÃ¼¹°°ø°Ý1
+   MAGIC_KINGTURTLE_ATT2_2 = 104; //Çö¹«Çö½Å-ÀüÃ¼¹°°ø°Ý2
+   MAGIC_KINGTURTLE_ATT3   = 105; //Çö¹«Çö½Å-¸ó½ºÅÍ¼ÒÈ¯
+   MAGIC_KINGTURTLE_ATT2_3 = 105; //Çö¹«Çö½Å-ÀüÃ¼¹°°ø°Ý1
+   MAGIC_KINGTURTLE_ATT2_4 = 107; //Çö¹«Çö½Å-ÀüÃ¼¹°°ø°Ý2
+
+   MAGIC_SPIDER_ATT1       = 108; //¿ùÁö°â½ÅÀå
+
+   MAGIC_POT_ATT           = 110; //È£Áß±Í1
+
+   MAGIC_MilSTONE_ATT3_1   = 111; //¼®¸¶¼ö °ø°Ý ÀÌÆÑÆ® È¸¿À¸®
+   MAGIC_MilSTONE_ATT3_2   = 112;
+   MAGIC_MilSTONE_ATT3_3   = 113;
+   MAGIC_MilSTONE_ATT3_4   = 114;
+   MAGIC_MilSTONE_ATT3_5   = 115;
+
+   MAGIC_WILDATTACK_ATT3_1   = 116;     //¾ß¼ö¿Õ
+   MAGIC_WILDATTACK_ATT3_2   = 117;     //¾ß¼ö¿Õ
+   MAGIC_WILDATTACK_ATT3_3   = 118;     //¾ß¼ö¿Õ
+   MAGIC_WILDATTACK_ATT3_4   = 119;     //¾ß¼ö¿Õ
+   MAGIC_WILDATTACK_ATT3_5   = 120;     //¾ß¼ö¿Õ
+   MAGIC_WILDATTACK_ATT3_6   = 121;     //¾ß¼ö¿Õ
+
+   MAGIC_NAMMAN_ATT1_1   = 122;     //´Ü¹¬
+   MAGIC_NAMMAN_ATT1_2   = 123;     //´Ü¹¬
+
+   MAGIC_MERMAID_ATT1_1  = 124;     //¼ö¾î±Í
+   MAGIC_MERMAID_ATT1_2  = 125;     //¼ö¾î±Í
+
+   MAGIC_FIREEXPLOSIN2   = 126;    //ÀÎ°£¼ö
+   MAGIC_SPIDER_ATT_1    = 127;    //°øÀÛÁÖ °Å¹ÌÁÙ
+
+   MAGIC_MED_ATT1_2  = 128;
+
+   MAGIC_WIND_LEAD_1 = 129;
+   MAGIC_EXPLOSIN_Tree   = 130; //»ï³ª¹«Á¤¹é
+   MAGIC_EXPLOSIN_WIZARD  = 131; //Çö¿ù´Ü¼ú»ç
+  MAGIC_FOX_CURSE2        = 132; //Çö¿ù´Üµµ»ç
+  MAGIC_EXPLOSIN_ICE      = 133; //ºù¿ø±ÍÁ¸
+  MAGIC_EXPLOSIN_DEVIL    = 134; //¾Ç±Í
+
+  SM_ALIVE              = 27;
+  SM_MOVEFAIL           = 28;
+  SM_HIDE               = 29;
+  SM_DISAPPEAR          = 30;
+  SM_STRUCK             = 31;   
+  SM_DEATH              = 32;
+  SM_SKELETON           = 33;
+  SM_NOWDEATH           = 34;
+  SM_ToSendMsg          = 36; //¹ßµµ¼ú
+
+  SM_HEAR               = 40;
+  SM_FEATURECHANGED     = 41;
+  SM_USERNAME           = 42;
+  SM_43                 = 43;
+  SM_WINEXP             = 44;
+  SM_LEVELUP            = 45;
+  SM_DAYCHANGING        = 46;
+  SM_LEVELUP2           = 47;   //µî¼±º¯È¯
+  SM_LEVELUP3           = 48;   //º¸³Ê½ºÆ÷ÀÎÆ®
+
+  SM_LOGON              = 50;
+  SM_NEWMAP             = 51;
+  SM_ABILITY            = 52;
+  SM_HEALTHSPELLCHANGED = 53;
+  SM_MAPDESCRIPTION     = 54;
+
+  SM_DRAGON_LIGHTING    = 80;
+  SM_81                 = 81;
+  SM_82                 = 82;
+  SM_83                 = 83;
+  SM_84                 = 84;   //¿°¸¶ÅÂÀÚ
+  SM_85                 = 85;   //¿°¸¶ÅÂÀÚ
+  SM_86                 = 86;   //¿°¸¶ÅÂÀÚ
+
+  SM_SPELL2             = 117;
+
+  SM_CHANGEFAMEPOINT    = 118; //Å³/µ¥½º º¯È­(2010/12/05)
+  SM_CHANGEFAMEPOINT2   = 124; //Å³/µ¥½º º¯È­(2010/12/05)
+
+  SM_SYSMESSAGE         = 100;
+  SM_GROUPMESSAGE       = 101;       //±×·ì ¸Þ½ÃÁö
+  SM_CRY                = 102;
+  SM_WHISPER            = 103;
+  SM_GUILDMESSAGE       = 104;
+  SM_MOVEMESSAGE        = 105;      //È­¸é°øÁö
+
+  SM_GUILDAILLY         = 219;
+
+  LM_WHISPER            = 106;
+  ME_WHISPER            = 107;
+
+  SM_ADDITEM            = 200;
+  SM_BAGITEMS           = 201;
+  SM_BAGITEMS2          = 213;
+  SM_AUCTIONITEMS       = 2011;
+  SM_DELITEM            = 202;
+  SM_UPDATEITEM         = 203;
+  SM_ADDMAGIC           = 210;
+  SM_SENDMYMAGIC        = 211;
+  SM_DELMAGIC           = 212;
+  SM_STORAGEITEMS       = 214;    //¿©°ü
+  SM_STORAGEITEMS2      = 215;   //¿©°ü
+  SM_ADDSTORAGE         = 216;
+  SM_ADDGROUPITEM       = 217; //±×·ì¾ÆÀÌÅÛ
+
+  SM_CERTIFICATION_SUCCESS = 500;
+  SM_CERTIFICATION_FAIL = 501;
+  SM_ID_NOTFOUND        = 502;
+  SM_PASSWD_FAIL        = 503;
+  SM_NEWID_SUCCESS      = 504;
+  SM_NEWID_FAIL         = 505;
+  SM_CHGPASSWD_SUCCESS  = 506;
+  SM_CHGPASSWD_FAIL     = 507;
+  SM_QUERYCHR           = 520;
+
+  SM_DELHUM     = 5068;
+  SM_RENEWHUM   = 5067;
+  SM_NEWCHR_SUCCESS     = 521;
+  SM_NEWCHR_FAIL        = 522;
+  SM_DELCHR_SUCCESS     = 523;
+  SM_DELCHR_FAIL        = 524;
+  SM_STARTPLAY          = 525;
+  SM_STARTFAIL          = 526;//SM_USERFULL
+  SM_QUERYCHR_FAIL      = 527;
+  SM_OUTOFCONNECTION    = 528;
+  SM_PASSOK_SELECTSERVER= 529;
+  SM_SELECTSERVER_OK    = 530;
+  SM_NEEDUPDATE_ACCOUNT = 531;
+  SM_UPDATEID_SUCCESS   = 532;
+  SM_UPDATEID_FAIL      = 533;
+  SM_FOXSTATE           = 537;  //ÃµÁÖ
+
+
+  SM_DROPITEM_SUCCESS   = 600;
+  SM_DROPITEM_FAIL      = 601;
+
+  SM_ITEMSHOW           = 610;
+  SM_ITEMHIDE           = 611;
+
+  SM_OPENDOOR_OK        = 612;
+  SM_OPENDOOR_LOCK      = 613;
+  SM_CLOSEDOOR          = 614;
+
+  SM_TAKEON_OK          = 615;
+  SM_TAKEON_FAIL        = 616;
+  SM_TAKEOFF_OK         = 619;
+  SM_TAKEOFF_FAIL       = 620;
+  SM_SENDUSEITEMS       = 621;
+  SM_WEIGHTCHANGED      = 622;
+  SM_CLEAROBJECTS       = 633;
+  SM_CHANGEMAP          = 634;
+  SM_GETTOPINFO         = 5341;
+  SM_TOPMSG             = 5343;
+  SM_EAT_OK             = 635;
+  SM_EAT_FAIL           = 636;
+  SM_BUTCH              = 637;
+  SM_MAGICFIRE          = 638;
+  SM_MAGICFIRE_FAIL     = 639;
+  SM_MAGIC_LVEXP        = 640;
+  SM_SOUND              = 641;
+  SM_DURACHANGE         = 642;
+  SM_MERCHANTSAY        = 643;
+  SM_MERCHANTDLGCLOSE   = 644;
+  SM_SENDGOODSLIST      = 645;
+  SM_SENDUSERSELL       = 646;
+  SM_SENDBUYPRICE       = 647;
+  SM_USERSELLITEM_OK    = 648;
+  SM_USERSELLITEM_FAIL  = 649;
+  SM_BUYITEM_SUCCESS2   = 6513;
+  SM_BUYITEM_SUCCESS    = 650;
+  SM_AUCTIONGIVE        = 6501;
+  SM_BUYITEM_FAIL       = 651;
+  SM_POINTCHANGED       = 652;
+  SM_GOLDCHANGED        = 653;
+  SM_CHANGELIGHT        = 654;
+  SM_LAMPCHANGEDURA     = 655;
+  SM_CHANGENAMECOLOR    = 656;
+  SM_CHARSTATUSCHANGED  = 657;
+  SM_SENDNOTICE         = 658;
+  SM_GROUPMODECHANGED   = 659;      //±×·ì ¸ðµå
+  SM_CREATEGROUP_OK     = 660;      //±×·ì °á¼º È®ÀÎ
+  SM_CREATEGROUP_FAIL   = 661;       //±×·ì °á¼º ½ÇÆÐ
+  SM_GROUPADDMEM_OK     = 662;      //±×·ì¿ø Ãß°¡
+  SM_GROUPDELMEM_OK     = 663;       //±×·ì¿ø »èÁ¦
+  SM_GROUPADDMEM_FAIL   = 664;        //±×·ì¿ø Ãß°¡ ½ÇÆÐ
+  SM_GROUPDELMEM_FAIL   = 665;        //±×·ì¿ø »èÁ¦ ½ÇÆÐ
+  SM_GROUPCANCEL        = 666;          //±×·ì Ãë¼Ò
+  SM_GROUPMEMBERS       = 667;          //±×·ì
+  SM_SENDUSERREPAIR     = 668;
+  SM_USERREPAIRITEM_OK  = 669;
+  SM_USERREPAIRITEM_FAIL= 670;
+  SM_SENDREPAIRCOST     = 671;
+  SM_DEALMENU           = 673;          //°Å·¡
+  SM_DEALTRY_FAIL       = 674;           //°Å·¡
+  SM_DEALADDITEM_OK     = 675;           //°Å·¡
+  SM_DEALADDITEM_FAIL   = 676;            //°Å·¡
+  SM_DEALDELITEM_OK     = 677;            //°Å·¡
+  SM_DEALDELITEM_FAIL   = 678;            //°Å·¡
+  SM_DEALCANCEL         = 681;            //°Å·¡
+  SM_DEALREMOTEADDITEM  = 682;           //°Å·¡
+  SM_DEALREMOTEDELITEM  = 683;           //°Å·¡
+  SM_DEALCHGGOLD_OK     = 684;           //°Å·¡
+  SM_DEALCHGGOLD_FAIL   = 685;           //°Å·¡
+  SM_DEALREMOTECHGGOLD  = 686;           //°Å·¡
+  SM_DEALSUCCESS        = 687;           //°Å·¡
+  SM_TIGERSETCHANGED    = 688;   //È£¶ûÀÌ
+  SM_FISHCANCEL         = 689;   //³¬½Ã Ãë¼Ò
+  SM_FISHINC            = 690;   //³¬½Ã ½ÇÆÐ
+  SM_SENDUSERSTORAGEITEM= 700;
+
+  SM_STORAGE_OK         = 701;
+  SM_STORAGE_FULL       = 702;
+  SM_STORAGE_FAIL       = 703;
+  SM_CONSIGN_OK         = 7011;      //À§Å¹
+  SM_CONSIGN_FAIL       = 7014;       //À§Å¹
+  SM_GETAUCTIONITEMS_FAIL = 7012;
+  SM_CLOSEAUCTION = 7013;
+  SM_TAKEBACKSTORAGEITEM_OK = 705;
+  SM_TAKEBACKSTORAGEITEM_FAIL = 706;
+  SM_TAKEBACKSTORAGEITEM_FULLBAG = 707;
+
+  SM_SETPASSWORD        = 785;            //Ã¢°í¾ÏÈ£
+  SM_INPUTPASSWORD      = 679;            //Ã¢°í¾ÏÈ£
+  SM_STORAGEPW_FAIL     = 799;                 //Ã¢°í¾ÏÈ£
+  SM_STORAGEPW_SUC      = 718;               //Ã¢°í¾ÏÈ£
+  SM_STORAGEPW_CHK      = 788;          //Ã¢°í¾ÏÈ£
+
+
+  SM_ALIVEREQ           = 715; //¼Ò»ý
+
+  SM_HOMEMOVE           = 312;
+
+  SM_AREASTATE          = 766;
+
+  SM_DELITEMS           = 709;
+
+  SM_MAKEDRUG_SUCCESS   = 713;
+  SM_MAKEDRUG_FAIL      = 714;
+
+
+  SM_716                = 716;
+  SM_GETMAKEGEMLIST     = 717;
+  SM_CHECKMSG           = 5262;
+
+  SM_EXCHGGOLD_OK       = 719;   //È¯Àü
+  SM_EXCHGGOLD_FAIL     = 720;   //È¯Àü
+  SM_EXCHGGAMEGOLD_OK   = 721;   //È¯Àü
+  SM_EXCHGGAMEGOLD_FAIL = 722;   //È¯Àü
+  SM_EXCANCEL           = 723;   //È¯Àü Ãë¼Ò
+  SM_EXSUCCESS          = 724;   //È¯Àü ¼º°ø
+  SM_EXCHGRATE          = 725;   //È¯Àü ½Ã¼¼
+
+  SM_SENDUSERMAKEITEMLIST = 726;    //Á¦Á¶½ºÃÄ
+
+  SM_PRICEDISASSEMBLE   = 727;
+  SM_SENDUSERDISASSEMBLE = 728;
+  SM_DISASSEMBLE_OK     = 729;
+  SM_DISASSEMBLE_FAIL   = 730;
+
+  SM_PRICEDISMANTLE     = 731;
+  SM_SENDUSERDISMANTLE  = 732;
+  SM_DISMANTLE_OK       = 733;
+  SM_DISMANTLE_FAIL     = 734;
+
+  SM_CHANGEGUILDNAME    = 750;
+  SM_SENDUSERSTATE      = 751;
+  SM_SUBABILITY         = 752;
+  SM_OPENGUILDDLG       = 753;
+  SM_OPENGUILDDLG_FAIL  = 754;
+  SM_SENDGUILDMEMBERLIST= 756;
+  SM_SENDGUILDGROW      = 755; //¹®ÆÄ¼ºÀå
+  SM_GUILDADDMEMBER_OK  = 757;
+  SM_GUILDADDMEMBER_FAIL= 758;
+  SM_GUILDDELMEMBER_OK  = 759;
+  SM_GUILDDELMEMBER_FAIL= 760;
+  SM_GUILDRANKUPDATE_FAIL= 761;
+  SM_BUILDGUILD_OK      = 762;
+  SM_BUILDGUILD_FAIL    = 763;
+  SM_DONATE_OK          = 764;
+  SM_DONATE_FAIL        = 765;
+
+  SM_MENU_OK            = 767;
+  SM_GUILDMAKEALLY_OK   = 768;
+  SM_GUILDMAKEALLY_FAIL = 769;
+  SM_GUILDBREAKALLY_OK  = 770;
+  SM_GUILDBREAKALLY_FAIL= 771;
+  SM_DLGMSG             = 772;
+
+  SM_SENDGUILDGROW2     = 773; //¹®ÆÄ¼ºÀå
+
+  SM_SPACEMOVE_HIDE     = 800;
+  SM_SPACEMOVE_SHOW     = 801;
+  SM_RECONNECT          = 802;
+  SM_GHOST              = 803;
+  SM_SHOWEVENT          = 804;
+  SM_HIDEEVENT          = 805;
+  SM_SPACEMOVE_HIDE2    = 806;
+  SM_SPACEMOVE_SHOW2    = 807;
+  SM_TIMECHECK_MSG      = 810;
+  SM_ADJUST_BONUS       = 811;
+  SM_SPACEMOVE_HIDE3    = 812;//ÀÏ¼¶ÀÌµ¿
+  SM_SPACEMOVE_SHOW3    = 813;//ÀÏ¼¶ÀÌµ¿
+  SM_SPACEMOVE_SHOW4    = 814;
+  SM_SIMPLE_OK          = 815;
+
+  SM_MAIL_ALARM         = 816;   //ÂÊÁö¿ÔÀ½ ¾Ë¸²
+  SM_MAIL_INFO          = 817;   //ÂÊÁöÁ¤º¸ º¯°æ
+  SM_CLIENTDATAFILE     = 818;
+  //¿¬ÀÎ ½ºÃÄ --------------
+  SM_LM_LIST     = 823;   //°ü°è ¸®½ºÆ®
+  SM_LM_OPTION   = 824;   //°ü°è ¿É¼Ç
+  SM_LM_REQUEST  = 825;   //°ü°è ¼³Á¤ ¿ä±¸
+  SM_LM_DELETE   = 826;   //°ü°è »èÁ¦
+  SM_LM_RESULT   = 827;   //°ü°è °á°ú°ª Àü¼Û
+  // RelationShip (cont.)--------------
+  SM_LM_DELETE_REQ     = 840;   //°ü°è »èÁ¦ È®ÀÎ
+
+ //»çÁ¦ ½ºÃÄ --------------
+  SM_ME_LIST     = 828;    //°ü°è ¸®½ºÆ®
+  SM_ME_INFO     = 829;    //°ü°è Á¤º¸ º¸³»±â
+
+  SM_SENDITEMLOCK = 844;
+  SM_USERITEMLOCK_OK = 845;
+  SM_USERITEMLOCK_FAIL = 846;
+
+  SM_USERITEMWAKE_OK = 847;
+  SM_USERITEMWAKE_FAIL = 848;
+
+  SM_USERITEMRESTORE_OK = 849;
+  SM_USERITEMRESTORE_FAIL = 850;
+
+
+  SM_OPENHEALTH         = 1100;
+  SM_CLOSEHEALTH        = 1101;
+  SM_CHANGEFACE         = 1104;
+  SM_BREAKWEAPON        = 1102;
+  SM_INSTANCEHEALGUAGE  = 1103;
+  SM_VERSION_FAIL       = 1106;
+  SM_LOOPNORMALEFFECT   = 1107;  //¼Ò»ý ÀÓÆåÆ® È¿°ú
+  // 2003/02/11 ±×·ì¿ø À§Ä¡ Á¤º¸
+  SM_GROUPPOS             = 1312;
+  // UpgradeItem_Result ---------------- by...2011/05/09
+  SM_UPGRADEITEM_RESULT     = 1300;    //º¸¿Á
+  // °ãÄ¡±â
+  SM_COUNTERITEMCHANGE      = 1301;
+
+  SM_SENDUSERWAKE = 1668;
+  SM_USERWAKE_OK = 1669;
+  SM_USERWAKE_FAIL = 1670;
+  SM_SENDWAKECOST = 1671;
+
+  SM_SENDUSERRESTORE = 1700;
+  SM_USERRESTORE_OK = 1701;
+  SM_USERRESTORE_FAIL = 1702;
+  SM_SENDRESTORECOST = 1703;
+
+  SM_CANCLOSE_OK            = 1304;
+  SM_CANCLOSE_FAIL          = 1305;
+
+  SM_ITEMUPDATE         = 1500;
+  SM_MONSTERSAY         = 1501;
+
+  SM_REPAIRITEMOK       = 1502;
+
+
+  SM_FRIEND_RESULT      = 1510;
+
+  // Mail2
+  SM_MAILLIST           = 1520;
+  SM_MAIL_LIST          = 1521;
+
+  SM_MAIL_RESULT        = 1523;
+  SM_MAILSTATUS         = 1524;
+  SM_REJECT_LIST        = 1526;
+  SM_REJECT_RESULT      = 1527;
+  SM_REJECT_ADD         = 1528;
+  SM_REJECT_DELETE      = 1529;
+
+  //GT SM
+  SM_GTLIST       = 1545;
+  SM_GTDECOLIST   = 1546;
+  SM_GTTRADE      = 1547;
+  SM_BBSMSGLIST   = 1548;       //Àå¿ø°Ô½ÃÆÇ
+  SM_BBSMSG       = 1549;       //Àå¿ø°Ô½ÃÆÇ
+
+  SM_EXCHGTAKEON_OK=65023;
+  SM_EXCHGTAKEON_FAIL=65024;
+
+  SM_EXPRATE                 = 7998;
+  SM_GROUPCALL               = 7999;
+  SM_ATTATCKMODE             = 8000;
+
+
+
+  SM_TEST=65037;
+  SM_ACTION_MIN   = 0;
+  SM_ACTION_MAX   = 26;
+  SM_ACTION2_MIN  = 39;
+  SM_ACTION2_MAX  = 100;
+
+  SM_ACTION3_MIN  = 300;
+  SM_ACTION3_MAX  = 311;
+
+  CM_SERVERREGINFO = 65074;
+
+  //-------------------------------------
+
+  CM_GETGAMELIST = 5001;
+  SM_SENDGAMELIST = 5002;
+  CM_GETBACKPASSWORD = 5003;
+  SM_GETBACKPASSWD_SUCCESS = 5005;
+  SM_GETBACKPASSWD_FAIL    = 5006;
+  SM_SERVERCONFIG = 5007;
+  SM_GAMEGOLDNAME = 5008;
+  SM_PASSWORD     = 5009;
+  SM_HORSERUN     = 5010;
+  //½Â·Á »ý»êºÒ°¡
+  CM_QUERYROGUE = 50062;
+  SM_ROGUEENABLED = 50063;
+  SM_ROGUEDISABLED = 50064;
+
+  SM_GETSAYITEM = 5267;
+  SM_FRIEND_LOGIN = 5269;
+
+  UNKNOWMSG           = 199;
+  SS_OPENSESSION      = 100;
+  SS_CLOSESESSION     = 101;
+  SS_KEEPALIVE        = 104;
+  SS_KICKUSER         = 111;
+  SS_SERVERLOAD       = 113;
+
+  SS_200              = 200;
+  SS_201              = 201;
+  SS_202              = 202;
+  SS_203              = 203;
+  SS_204              = 204;
+  SS_205              = 205;
+  SS_206              = 206;
+  SS_207              = 207;
+  SS_208              = 208;
+  SS_209              = 209;
+  SS_210              = 210;
+  SS_211              = 211;
+  SS_212              = 212;
+  SS_213              = 213;
+  SS_214              = 214;
+  SS_WHISPER          = 299;
+
+  SS_SERVERINFO       = 103;
+  SS_SOFTOUTSESSION   = 102;
+  SS_LOGINCOST        = 30002;
+
+  DBR_FAIL            = 2000;
+  DB_LOADHUMANRCD     = 100;
+  DB_SAVEHUMANRCD     = 101;
+  DB_SAVEHUMANRCDEX   = 102;//?
+  DBR_LOADHUMANRCD    = 1100;
+  DBR_SAVEHUMANRCD    = 1102; //?
+
+  DB_LOADHERORCD      = 103;
+  DB_SAVEHERORCD      = 104;
+  DBR_LOADHERORCD      = 1103;
+  DBR_SAVEHERORCD     = 1104; 
+
+  DB_NEWHERORCD       = 105;
+  DB_DELHERORCD       = 106;
+  DBR_NEWHERORCD      = 1105;
+  DBR_DELHERORCD      = 1106;
+  DBR_NOTCREATEHERO   = 1107;
+
+  RUNGATECODE = $AB36AB68;
+
+  GM_OPEN             = 1;
+  GM_CLOSE            = 2;
+  GM_CHECKSERVER      = 3;// Send check signal to Server
+  GM_CHECKCLIENT      = 4;// Send check signal to Client
+  GM_DATA             = 5;
+  GM_SERVERUSERINDEX  = 6;
+  GM_RECEIVE_OK       = 7;
+  GM_TEST             = 20;
+
+
+  SG_FORMHANDLE       = 32001;
+  SG_STARTNOW         = 32002;
+  SG_STARTOK          = 32003;
+  SG_CHECKCODEADDR    = 32004;
+  SG_USERACCOUNT      = 32005;
+  SG_USERACCOUNTCHANGESTATUS = 32006;
+  SG_USERACCOUNTNOTFOUND     = 32007;
+
+  SG_DBSAVEOUT        = 32008;
+  SG_CHECKRUNCODE     = 32009;      //¼öÁ¤µÇ¾ú½À´Ï´Ù.
+
+  GS_QUIT             = 32101;
+  GS_USERACCOUNT      = 32102;
+  GS_CHANGEACCOUNTINFO = 32103;
+  GS_CHECKRUNCODE      = 32104;     //¼öÁ¤µÇ¾ú½À´Ï´Ù.
+
+type
+  TNpcType = (n_Norm, n_Merchant);
+  TSockData = (d_LoadHumData, d_SaveHumData, d_LoadHeroData, d_SaveHeroData, d_SaveData);   //·©Å· Ãß°¡
+  THeroDataType = (l_Create, l_Delete, l_Load, l_Save);
+//-----------------------------------------
+  pTDefaultMessage=^TDefaultMessage;
+  TDefaultMessage = record
+    Recog    :Integer;
+    Ident    :Word;
+    Param    :Word;
+    Tag      :Word;
+    Series   :Word;
+  end;
+
+  TVarType = (vNone, vInteger, vString);
+  TVarAttr = (aNone, aFixStr, aDynamic, aConst);
+
+  TVarInfo = record
+    VarType: TVarType;
+    VarAttr: TVarAttr;
+  end;
+  pTVarInfo = ^TVarInfo;
+
+  TChrMsg =record
+    Ident    :Integer;
+    X        :Integer;
+    Y        :Integer;
+    Dir      :Integer;
+    State    :Integer;
+    feature  :Integer;
+    saying   :String;
+    Sound    :Integer;
+  end;
+  PTChrMsg = ^TChrMsg;
+
+  TValue = array[0..19] of Byte;
+
+  TRenewChrInfo = record
+    ID: Integer;
+    Name: string[16];
+    Job: Byte;
+    Level: Word;
+    Sex: Byte;
+  end;
+
+  pTStdItem=^TStdItem;
+  TStdItem=packed record
+     Name: string[22];
+     StdMode            :Byte;
+     Grade              :Byte;
+     Shape              :Byte;
+     Weight             :Byte;
+     AniCount           :Byte;
+     Source             :shortint;    // +ÀÌ¸é »ý¹°°ø°Ý+´É·Â, -ÀÌ¸é ¾ðµ¥µå°ø°Ý+
+                                      //1~10 °­µµ
+                                      //-50~-1 ¾ðµ¥µå ´É·ÂÄ¡ Çâ»ó
+                                      //-100~-51 ¾ðµ¥µå ´É·ÂÄ¡ °¨¼Ò
+     reserved           :byte;
+     NeedIdentify       :byte;
+     Looks              :Word;
+     DuraMax            :DWord;
+     AC                 :Dword;
+     MAC                :Dword;
+     DC                 :Dword;
+     MC                 :Dword;
+     SC                 :DWord;
+     Need               :DWord;
+     NeedLevel          :DWord;
+     NeedOption         :DWord;
+     Price              :UINT;
+     Color              :Integer;
+     Tox                :Word;
+     ToxAvoid           :Word;
+     SlowDown           :Word;
+     MagAvoid           :Word;
+     HpAdd              :Word;
+     MpAdd              :Word;
+     RecHp              :Word;
+     RecMp              :Word;
+     AtkSpd             :Word; //Áßµ¶ ÆÇÁ¤ °ø¼Ó
+     Agility            :Word; //Áßµ¶ ÆÇÁ¤ ¹ÎÃ¸ ¼º
+     Accurate           :Word; //Áßµ¶ ÆÇÁ¤ Á¤È® ¼º
+     WearWeight         :Word; //Âø¿ë¹«°Ô
+     HumUp              :Byte; //µî¼±ÆÇ´Ü
+     CheckNoAss         :Boolean;
+     CheckAss           :Boolean;
+     CheckBonze         :Boolean;
+     HumRun             :Boolean; //ÁúÁÖ±â´É
+     DDay               :Byte; //¹ÝÂ¦ ¾ÆÀÌÅÛ
+     MaxAmount          :integer;
+     btValue            :TValue; //+16
+     MaxDate            :integer;
+     Owner              :String[20];
+     ItemGlow		        :Byte;
+
+     DropDell           :Boolean;    //¾ÆÀÌÅÛ ¹ö¸²
+     ChangeItem         :Boolean;
+     DisassembleItem    :Boolean;
+     NonStuff           :Boolean;
+     boCompound         :Boolean;
+     boOnlyHero         :Boolean;
+     Unique             :Boolean;
+     boCanTrade         :Boolean;
+     boCanDrop          :Boolean;
+     boCanDeathDrop     :Boolean;
+     boCanRepair        :Boolean;
+     boCanSpecialRepair :Boolean;
+     boCanStore         :Boolean;
+     boCanSell          :Boolean;      //ÆÇ¸Å±ÝÁö
+     boCanHeroBag       :Boolean;
+
+     WEffect            :integer;
+     SetItemList: TList;
+  end;
+
+  PTClientItem =^TClientItem;
+  TClientItem = record
+    S         :TStdItem;
+    MakeIndex :Integer;
+    Dura      :Word;
+    DuraMax   :Word;
+    Amount    :Integer;
+    UpgradeOpt   : integer;    //¾÷±×·¹ÀÌµå µÈ °³¼ö
+  end;
+
+  PSBuyItem=^SBuyItem;       //»óÀÎ
+  SBuyItem = packed record
+    Price:Integer;
+    Stock:word;
+    entItem:TClientItem;
+  end;
+
+  TGuildGrowUp =record       //¹®ÆÄ¼ºÀå
+    GuildName     :String[20];
+    GuildOwnerName:String[20]; //»ó´ë¹æ ¹®ÁÖ ÀÌ¸§
+
+    GuildLevel    :Integer;
+    GuildPoint    :Integer;
+    GuildExp      :Integer;
+    GuildMaxExp   :Integer;
+
+    GrowHP        :Integer;
+    GrowMP        :Integer;
+    GrowExp       :Integer;
+    GrowAC        :Integer;
+    GrowMAC       :Integer;
+    GrowPower     :Integer;
+    GrowLuck      :Integer;
+  end;
+
+
+  TVailantInfo =record //¿ë¸ÍÀÇÀüÀå
+    BlueTotalPoint   :Integer;
+    RedTotalPoint    :Integer;
+
+    BlueMoonPoint    :Integer;
+    RedMoonPoint     :Integer;
+
+    BlueSunPoint     :Integer;
+    RedSunPoint      :Integer;
+
+    BlueThunderPoint :Integer;
+    RedThunderPoint  :Integer;
+  end;
+
+  TVailantGroup = packed record
+    UserName: string[ActorNameLen];
+    RedOrBlue: Byte;
+    Level: Word;
+    Kill, Death: Integer;
+    IndividualPoint, AdditionPoint, HonorPoint: Integer; //°³ÀÎÁ¡¼ö, Ãß°¡Á¡¼ö, ¸í¿¹Æ÷ÀÎÆ®
+  end;
+  pTVailantGroup = ^TVailantGroup;
+
+  TVailantMember = packed record
+    VailantGroup: TVailantGroup;
+    isScreen: TObject;
+  end;
+  pTVailantMember = ^TVailantMember;
+
+  TUserStateInfo =record
+    Feature       :Integer;
+    Job           :Byte;
+    Level         :Word;
+    Sex           :Byte;
+    UserName      :String[20];
+    GuildName     :String[20];
+    GuildRankName :String[16];
+    LoverName     :String[14];
+    Column        :Byte;
+    NameColor     :Integer;
+    bExistLover   :Boolean;     //¿¬ÀÎ »óÅÂ(2004/10/27)
+    UseItems      :array [0..MAXUSEITEM] of TClientItem;     //¾ÆÀÌÅÛ °¹¼ö
+    FameName      :string[20]; //Å³/µ¥½º
+    ColumName     :string[20]; 
+    DC            :DWord;
+    MC            :DWord;
+    SC            :DWord;
+    AC            :DWord;
+    MAC           :DWord;
+    KillPoint     :Integer;    //Å³/µ¥½º
+    DeathPoint    :Integer;    //Å³/µ¥½º
+    GuildMark     :Integer;    //»ó´ë¹æ ¹®ÆÄ¸¶Å©
+    GuildOwnerName:String[20]; //»ó´ë¹æ ¹®ÁÖ ÀÌ¸§
+    GuildList     :Integer;    //»ó´ë¹æ ¹®¿ø¼ö
+    GuildLevel    :Integer;    //»ó´ë¹æ ¹®¿ø ·¹º§
+    Mask          :Integer;
+    bHero         :Boolean;
+  end;
+  TUserCharacterInfo =record
+    Name:String[19];
+    Job:Byte;
+    Hair:Byte;
+    Level:Integer;
+    Sex:Byte;
+    Login:String[40];
+  end;
+  TUserEntry =record
+    sAccount      :String[10];
+    sPassword     :String[10];
+    sUserName     :String[20];
+    sSSNo         :String[14];
+    sPhone        :String[14];
+    sQuiz         :String[20];
+    sAnswer       :String[12];
+    sEMail        :String[40];
+  end;
+  TUserEntryAdd =record
+    sQuiz2        :String[20];
+    sAnswer2      :String[12];
+    sBirthDay     :String[10];
+    sMobilePhone  :String[15];
+    sMemo         :String[40];
+    sMemo2        :String[40];
+  end;
+
+
+  TDropItem =record
+    X:Integer;
+    Y:Integer;
+    Id:integer;
+    Looks:integer;
+    Name:String;
+    Grade:Byte;
+    FlashTime:Dword;
+    FlashStepTime:Dword;
+    FlashStep:Integer;
+    BoFlash:Boolean;
+    BoDeco      : Boolean;
+  end;
+  PTDropItem = ^TDropItem;
+
+  pTMagic=^TMagic;
+  TMagic =record
+    wMagicID:Word;
+    wMimicID:Word;
+    sMagicName:String[20];
+    btEffectType:Byte;
+    btEffect:Byte;
+    btIcon:Byte; //¹«°ø ¾ÆÀÌÄÜ
+    wSpell:Word;
+    wPower:Word;
+    TrainLevel:Array[0..3] of Byte;    //¹«°ø·¹º§
+    MaxTrain:Array[0..3] of Integer;    //¹«°ø·¹º§
+    btTrainLv:Byte;
+    btJob:Byte;
+    dwDelayTime:Integer;
+    dwUseDelayTime:Integer;
+    btDefSpell:Byte;
+    btDefPower:Word;//Byte;
+    wMaxPower:Word;
+    btDefMaxPower:Word;//Byte;
+  end;
+  TClientMagic = record
+    Key    :Char;
+    Level  :Byte;
+    CurTrain:Integer;
+    Def    :TMagic;
+  end;
+  PTClientMagic = ^TClientMagic;
+
+  pTClientGroup = ^TClientGroup;
+  TClientGroup = packed record
+    UserName: string[ActorNameLen];
+    UserID: Integer;
+    Level: Word;
+    HP, MP, MaxHP, MaxMP: Word;
+    btJob, btSex: Byte;
+  end;
+  pTGroupMember = ^TGroupMember;
+  TGroupMember = packed record
+    ClientGroup: TClientGroup;
+    isScreen: TObject;
+  end;
+
+  //¿ìÆí½Ã½ºÅÛ
+  pTClientEMailHeader = ^TClientEMailHeader;
+  TClientEMailHeader = packed record
+    nIdx: Integer;
+    sTitle: string[20];
+    sSendName: string[ActorNameLen];
+    boRead: Boolean;
+    boSystem: Boolean;
+    btTime: Byte;
+  end;
+
+  // 2003/04/15 Ä£±¸, ÂÊÁö
+ 
+  TNMailItem = record
+      Id    : Integer;
+      Sender: String;    //º¸³½»ç¶÷
+      Recipient :String; //¹Þ´Â»ç¶÷
+      Date  : String;   //³¯Â¥
+      Mail  : String;    //³»¿ë
+      Status: Integer;   //ÀÐÀ½ »èÁ¦±ÝÁö ¾ÈÀÐÀ½ µî..
+   end;
+   PNMailItem = ^TNMailItem;
+
+  pTNakedAbility=^TNakedAbility;
+  TNakedAbility =record
+    DC    :Word;
+    MC    :Word;
+    SC    :Word;
+    AC    :Word;
+    MAC   :Word;
+    HP    :Word;
+    MP    :Word;
+    Hit   :Word;
+    Speed :integer;
+    X2    :byte;
+  end;
+
+
+
+  TShortMessage = record
+    Ident    :Word;
+    wMsg     :Word;
+  end;
+
+  TMessageBodyW = record
+    Param1:Word;
+    Param2:Word;
+    Tag1:Word;
+    Tag2:Word;
+  end;
+
+  TMessageBodyWL = record 
+    lParam1    :Integer;
+    lParam2    :Integer;
+    lTag1      :Integer;
+    lTag2      :Integer;
+  end;
+
+  TCharDesc =record
+    Feature  :Integer;
+    Status   :Integer;
+    Level: Integer;
+    HP: Integer;
+    MaxHP: Integer;
+    AddStatus:Integer;   //¹®ÆÄ ¸¶Å©
+    AddStatus2:Integer;   //»©»©·Î
+  end;
+
+  pTTopInfo = ^TTopInfo;
+  TTopInfo = packed record
+    sChrName: string[ActorNameLen];
+    sMasName: string[ActorNameLen];
+    btJob: Byte;
+    bySex: Byte;
+    dwCount: LongWord;
+  end;
+
+  pTTopHeader = ^TTopHeader;
+  TTopHeader = packed record
+    btType: Byte;
+    wCount: Word;
+  end;
+
+  TClientTopInfo = array[0..19] of TTopInfo;
+
+  TClientGoods = record
+    Name    :String;
+    Price   :Integer;
+    Stock   :Integer;
+    Grade   :Integer;
+    looks   :Integer;
+    Amount  :Integer;  //¹°¾à
+    modes   :Integer;  //¹°¾à
+    Item: TClientItem;
+  end;
+  pTClientGoods=^TClientGoods;
+
+  TShopInfo = record
+    StdItem: pTSTDITEM;
+    sIntroduce:array [0..50] of Char;
+  end;
+  pTShopInfo = ^TShopInfo;
+
+  pTClientFriends=^TClientFriends;
+  TClientFriends = record
+    Id        :Word;
+    Name      :String;
+    Status    :Byte;
+    Memo      :String;
+    Blacklist :Boolean;
+  end;
+
+  pTAbility=^TAbility;
+  TAbility= packed record
+     Level              :Word;
+     AC                 :DWord;
+     MAC                :DWord;
+     DC                 :DWord;
+     MC                 :DWord;
+     SC                 :DWord;
+     HP                 :Word;
+     MP                 :Word;
+     MaxHP              :Word;
+     MaxMP              :Word;
+     Exp                :DWord;
+     MaxExp             :DWord;
+     Weight             :Word;
+     MaxWeight          :Word;
+     WearWeight         :Word;
+     MaxWearWeight      :Word;
+     HandWeight         :Word;
+     MaxHandWeight      :Word;
+     KillPointCurr      :Integer;
+     DeathPointCurr     :Integer;
+     KillPoint          :Integer;
+     DeathPoint         :Integer;
+  end;
+
+  //---------------------------------------------
+
+type
+  TProgamType=(tDBServer,tLoginSrv,tLogServer,tM2Server,tLoginGate,
+    tLoginGate1,tSelGate,tSelGate1,tRunGate,tRunGate1,tRunGate2,
+    tRunGate3,tRunGate4,tRunGate5,tRunGate6,tRunGate7, tRanking, tMir2);    //¼öÁ¤µÇ¾ú½À´Ï´Ù.
+
+  TRecordHeader = packed record
+     sAccount:String[16];
+     sChrName:String[20];
+     boIsHero: Boolean;
+     nSelectID:integer;
+     dCreateDate:TDateTime;
+     boDeleted:boolean;
+     UpdateDate:TDateTime;
+     CreateDate:TDateTime;
+  end;
+
+  THumInfo = record
+     boDeleted:Boolean;
+     boSelected:Boolean;
+     sAccount:String[10];
+     dModDate:TDateTime;
+     sChrName:String[20];
+     btCount:Byte;
+     Header:TRecordHeader;
+     boIsHero: Boolean;
+  end;
+
+  pTUserItem=^TUserItem;
+  TUserItem=record                         //=24
+    MakeIndex       :Integer;              //+4
+    wIndex          :Word;                 //+2
+    Dura            :word;                 //+2
+    DuraMax         :Word;                 //+2
+    btValue         :TValue; //+16
+    MaxDate         :Integer;
+    Amount          :Integer;
+  end;
+
+  TItemCount = Integer;
+
+  TDuelItem = packed record //ÌôÕ½
+    boFinish: Boolean; //ÌôÕ½Íê³É
+    boDelete: Boolean;
+    btDuel: Byte;
+    sOwnerName: string[ACTORNAMELEN];
+    sDuelName: string[ACTORNAMELEN];
+    UserItem: TUserItem;
+    n01: Integer;
+    n02: Integer;
+    nIndex: Integer;
+  end;
+  pTDuelItem = ^TDuelItem;
+
+  TDuel = packed record //ÌôÕ½
+    boDelete: Boolean;
+    boVictory: Boolean; //Ê¤Àû
+    sCharName: string[ACTORNAMELEN];
+    nDuelGold: Integer;
+    nItemCount: Integer;
+    n01: Integer;
+    n02: Integer;
+  end;
+  pTDuel = ^TDuel;
+
+  TDuelInfo = packed record //ÌôÕ½
+    boDelete: Boolean;
+    btDuel: Byte;
+    SaveDateTime: TDateTime;
+    Owner: TDuel; //Ö÷¶¯ÌôÕ½ÈË
+    Duel: TDuel; //±»¶¯ÌôÕ½ÈË
+    boFinish: Boolean; //ÌôÕ½Íê³É
+    n03: Integer;
+    n04: Integer;
+    nIndex: Integer;
+  end;
+  pTDuelInfo = ^TDuelInfo;
+  
+  pTUserMagic=^TUserMagic;
+  TUserMagic=record
+    MagicInfo:pTMagic;
+    btLevel:byte;
+    wMagIdx:word;
+    nTranPoint:integer;
+    btKey:byte;
+  end;
+
+  TAucItem = record               //°æ¸Å
+    Str: String;
+    nTime: Integer;
+    Price: Integer;
+    APrice: Integer;
+    Seller: String[ActorNameLen];
+    Solder: String[ActorNameLen];
+    Item: TClientItem;
+  end;
+  pTAucItem = ^TAucItem;
+
+  TAucbuffItem = record         //°æ¸Å
+    Str: String;
+    nTime: Integer;
+    Price: Integer;
+    APrice: Integer;
+    Seller: String[ActorNameLen];
+    Solder: String[ActorNameLen];
+    Item: TClientItem;
+  end;
+  pTAucbuffItem = ^TAucbuffItem;
+
+
+  TItemIndex = record     //°³ÀÎ»óÁ¡
+    btSellType: Byte;
+    ItemName: string[30];
+    MakeIndex: Integer;
+    Price: Integer;
+  end;
+  pTItemIndex = ^TItemIndex;
+
+  TStoreServerItem = record         //°³ÀÎ»óÁ¡
+    btSellType: Byte;
+    Price: Integer;
+    UserItem: TUserItem;
+  end;
+  pTStoreServerItem = ^TStoreServerItem;
+
+  TStoreItem = record                //°³ÀÎ»óÁ¡
+    btSellType: Byte;
+    Item: TClientItem;
+  end;
+  pTStoreItem = ^TStoreItem;
+
+  TUserStoreStateInfo = record       //°³ÀÎ»óÁ¡
+    RecogId: Integer;
+    UserName: string[30];
+    NAMECOLOR: Integer;
+    SellMsg: string[30];
+    UseItems: array[0..15] of TStoreItem;
+  end;
+  pTUserStoreStateInfo = ^TUserStoreStateInfo;
+
+  pTLover=^TLover;
+  TLover = record
+    Lover           :String[ActorNameLen];
+    StartDate       :TDateTime;
+    TotalDays       :Integer;
+    boHasLover      :Boolean;
+  end;
+       
+  pTMaster=^TMaster;      //»çÁ¦
+  TMaster = record
+    Master         :String[ActorNameLen];
+    StartDate      :TDateTime;
+    TotalDays      :Integer;
+    MasterLevel    :Byte; //»çÁ¦
+    boHasMaster    :Boolean;
+  end;
+
+
+  pTClientGT=^TClientGT;
+  TClientGT = record
+    Number          :byte;
+    GuildName       :String[GuildNameLen];
+    GuildMasters    :Array[0..1] of String[ActorNameLen];
+    SalePrice       :Integer;
+    Status          :byte;//0=normal, 1= onsale, 2= sold, pending activation
+  end;
+
+  pTDecoItem=^TDecoItem;
+  TDecoItem = record
+    Appr            :Word;
+    Name            :String[20];
+    Price           :integer;
+    Location        :byte;
+  end;
+
+  THumanUseItems=array[0..MAXUSEITEM] of TUserItem;
+  THumItems=array[0..MAXUSEITEM] of TUserItem;
+  pTHumItems=^THumItems;
+
+  THeroItems = array[0..MAXHEROUSEITEM] of TUserItem;
+  pTHeroItems = ^THeroItems;
+
+
+  pTBagItems=^TBagItems;
+  TBagItems=array[0..MAXBAGITEM] of  TUserItem;
+
+  pTStorageItems=^TStorageItems;         //Ã¢°í
+  TStorageItems=array[0..STORAGELIMIT] of TUserItem;
+
+  pTHumMagic=^THumMagic;
+  THumMagic=Array[0..HOWMANYMAGICS-1] of TUserMagic;
+
+  pTAutoItems = ^TAutoItems;
+  TAutoItems = array[0..1] of TUserItem;
+
+  pTHumMagicInfo=^THumMagicInfo;
+  THumMagicInfo=TUserMagic;
+
+  TStatusTime=array [0..MAX_STATUS_ATTRIBUTE - 1] of Word;     //½ºÅ×ÀÌÆ®
+
+  TUseItemNames = array[0..12] of string[16];
+  pTUseItemNames = ^TUseItemNames;
+
+  TQuestUnit=array[0..13] of Byte;
+  TQuestFlag=array[0..104] of Byte;
+
+  pTMissionInfo = ^TMissionInfo;
+  TMissionInfo = packed record
+    sMissionName: String[MapNameLen];
+    btKillCount1: Byte;
+    btKillCount2: Byte;
+    boTrack: Boolean;
+    wTime: Word;
+  end;
+
+  TMissionFlag = array[0..99] of Byte;
+  TMissionInfos = array[1..20] of TMissionInfo;
+  TMissionArithmometer = array[0..19] of Byte;
+  TMissionIndex = array[0..99] of Byte;
+
+  pTHumData=^THumData;
+  THumData = packed record       //3164
+    sChrName        :String[ActorNameLen];
+    sCurMap         :String[MapNameLen];
+    wCurX           :Word;
+    wCurY           :Word;
+    btDir           :Byte;
+    btHair          :Byte;
+    btSex           :Byte;
+    btJob           :Byte;
+    nGold           :Integer;
+
+    Abil            :TAbility;         //+40
+    wStatusTimeArr  :TStatusTime;  //½ºÅ×ÀÌÆ®
+    sHomeMap        :String[MapNameLen];
+    wHomeX          :Word;
+    wHomeY          :Word;
+    BonusAbil       :TNakedAbility;     //+20
+    nBonusPoint     :Integer;
+    btAiMode        :Byte;
+    btReLevel       :Byte;
+
+    //boStoragePwd    :Boolean;       //Ã¢°íºñ¹ø
+    sStoragePwd     :String[6];    //Ã¢°íºñ¹ø
+
+    xLoveInfo       :TLover;       //¿¬ÀÎ
+    xMasterInfo     :TMaster;      //¸àÅä
+
+    nGameGold       :Integer;
+    nBankGold       :Integer;
+    nGamePoint      :Integer;
+    nPCPoint        :Integer;
+    nPKPoint        :Integer;   //ÇÇÄÉÀÌ
+
+    nKillPoint      :Integer;  //Å³/µ¥½º
+    nDeathPoint     :Integer;  //Å³/µ¥½º
+
+    btAllowGroup    :Byte;
+    btAttatckMode   :Byte;     //°ø°Ý ¸ðµå
+    btIncHealth     :Byte;
+    btIncSpell      :Byte;
+    btIncHealing    :Byte;
+    btFightZoneDieCount:Byte;
+    sAccount        :String[16];
+    boLockLogon     :Boolean;       //Á¢¼Óºñ¹ø
+    sLogonPwd       :String[10];    //Á¢¼Óºñ¹ø
+
+    nMasterUpExp    :Integer;
+    boAllowGuildReCall:Boolean;
+    wGroupRcallTime :Word;
+    dBodyLuck       :TDateTime;
+    boAllowGroupReCall:Boolean;  //±×·ì ¿äÃ»
+    QuestUnitOpen   :TQuestUnit;
+    QuestUnit       :TQuestUnit;
+    QuestFlag       :TQuestFlag;
+
+    MissionFlag        :TMissionFlag;                   //Äù½ºÆ®
+    MissionInfo        :TMissionInfos;                  //Äù½ºÆ®
+    MissionArithmometer:TMissionArithmometer;    //Äù½ºÆ®
+    MissionIndex       :TMissionIndex;                 //Äù½ºÆ®
+
+    HumItems        :THumItems;
+    BagItems        :TBagItems;
+    Magic           :THumMagic;
+    StorageItems    :TStorageItems;    //Ã¢°í
+
+    boIsHero: Boolean; //Is a hero         //¿µ¿õÀÎÁö
+    btStatus: Byte;                        //¿µ¿õ°ø°Ý¸ðµå
+    btHeroAutoDurg: Byte;                   //ÀÚµ¿¹°¾à »ç¿ëÇÏ´ÂÁö
+    sHeroChrName: string[ACTORNAMELEN];    //¿µ¿õÀÌ¸§
+    sMasterName: string[ACTORNAMELEN];
+    nHeroGrade: Byte;           //¿µ¿õµî±Þ
+    btLimitLevel: Byte;        //¿µ¿õ·¹º§Á¦ÇÑ
+    AutoItems: TAutoItems;     //¿µ¿õ ÀÚµ¿¹°¾àÄ­
+  end;
+
+  THumDataInfo= packed record
+    Header:TRecordHeader;
+    Data:THumData;
+  end;
+
+  pTGlobaSessionInfo=^TGlobaSessionInfo;
+  TGlobaSessionInfo=record
+     sAccount:String[16];
+     nSessionID:integer;
+     boLoadRcd:Boolean;
+     boStartPlay:Boolean;
+     sIPaddr:String[15];
+     n24:integer;
+     dwAddTick:DWord;
+     dAddDate:TDateTime;
+  end;
+
+  TCheckCode = packed record
+     dwThread0:DWord;
+     sThread0:String;
+  end;
+
+  TAccountDBRecord = record
+     Header:TRecordHeader;
+     nErrorCount:integer;
+     dwActionTick:DWord;
+     UserEntry:TUserEntry;
+     UserEntryAdd:TUserEntryAdd;
+  end;
+
+
+  pTConnInfo=^TConnInfo;
+  TConnInfo=record
+
+  end;
+
+  pTQueryChr=^TQueryChr;
+  TQueryChr=packed record
+    btClass:Byte;
+    btHair:Byte;
+    btGender:Byte;
+    btLevel:Byte;
+    sName:String[ActorNameLen];
+  end;
+
+
+  pTMsgHeader=^TMsgHeader;
+  TMsgHeader = record
+    dwCode:DWord;
+    nSocket:integer;
+    wGSocketIdx:word;
+    wIdent:word;
+    wUserListIndex:word;
+    nLength:integer;
+  end;
+
+  pTBBSMSGL = ^TBBSMSGL;       //Àå¿ø°Ô½ÃÆÇ
+  TBBSMSGL = record
+    index:integer;
+    Sticky:Boolean;
+    Poster:String[ActorNameLen];
+    Msg:String;
+    MasterIndex: integer;
+  end;
+
+  pTBBSMSG  = ^TBBSMSG;           //Àå¿ø°Ô½ÃÆÇ
+  TBBSMSG = record
+    index:integer;
+    Sticky:Boolean;
+    Poster:String[ActorNameLen];
+    Msg:String[40];
+    MasterIndex: integer;
+  end;
+
+//M2Server
+
+Const
+
+  GROUPMAX        = 13;      //±×·ì¿ø ÃÖ´ë 13
+
+  CM_PASSWORD     = 2001;
+  CM_CHGPASSWORD  = 2002;
+  CM_SETPASSWORD  = 2004;
+
+  CM_HORSERUN     = 3035;
+  CM_CRSHIT       = 3036;   //±¤Ç³Âü
+  CM_BOW          = 3039; //±Ã¼ö
+  CM_TWINHIT      = 3038;
+  CM_BALDO        = 3093;     //¹ßµµ¼ú
+  CM_DOWN         = 3091; //¿ù¿µ¼ú
+  CM_DOWNRUN      = 3089; //¿ù¿µ¼ú
+  CM_QUERYUSERSET = 3040;
+  CM_BALDO2       = 3094;     //¹ßµµ¼ú
+
+  CM_NANCRSHIT    = 3100;  //³­È­Ç÷Ç³Âü
+
+  CM_CPOWERHIT = 3095;
+  CM_CFIREHIT  = 3096;
+  CM_THUNDERHIT = 3062;
+  CM_FIRESHAOLIN = 3063;
+  CM_CRBHIT      = 3067;      //È¸Ç³ÃµºÀ¹ý
+
+  SM_PLAYDICE    = 8001;
+  SM_SHOWEFFECT  = 8002;
+  SM_GROUPINFO1  = 5259;
+  SM_GROUPINFO2  = 5260;
+
+  DATA_BUFSIZE        = {8192;//}1024;    //»çÀÌÁî¿ÀºêÈÞ¸Õ
+
+  DEFSAYLISTWIDTH     = 386;
+
+  RUNGATEMAX          = 8;
+
+  MAXMAGIC             = 54;
+  MAXFRIENDS           = 22;
+
+  PN_GETRGB            = 'GetRGB';
+  PN_GAMEDATALOG       = 'GameDataLog';
+  PN_SENDBROADCASTMSG  = 'SendBroadcastMsg';
+
+  sSTRING_GOLDNAME     = '±ÝÀü';
+  sSTRING_GAMEGOLDNAME = 'È¯';
+  MAXGUILDLEVEL        = 35; //¹®ÆÄ¼ºÀå
+  MAXLEVEL             = 500;
+  SLAVEMAXLEVEL        = 50;
+
+  MAXSAYITEMCOUNT = 1000;
+
+  LOG_GAMEGOLD         = 30;
+  LOG_GAMEPOINT        = 31;
+
+
+  RC_PLAYOBJECT  = 0;
+  RC_GUARD       = 11;
+  RC_MOVEGUARD   = 13;
+  RC_PEACENPC    = 15;
+  RC_ANIMAL      = 50;
+  RC_MONSTER     = 80;
+  RC_NPC         = 10;
+  RC_ARCHERGUARD = 112;
+  RC_PET         = 240; //¿µ¹°
+  RC_HEROOBJECT  = 255; //¿µ¿õ
+
+
+  RM_TURN              = 10001;
+  RM_WALK              = 10002;   //°È±â
+  RM_HORSERUN          = 50003;
+  RM_RUN               = 10003;
+  RM_HITLEFT           = 10004; //¿ÞÂÊ
+  RM_HIT               = 10006;
+  RM_BIGHIT            = 10007;
+  RM_HEAVYHIT          = 10008;
+  RM_SPELL             = 10048;
+  RM_POWERHIT          = 10009;    //¿¹µµ°Ë¹ý
+  RM_MOVEFAIL          = 10010;
+  RM_LONGHIT           = 10011;
+  RM_WIDEHIT           = 10012;
+  RM_FIREHIT           = 10014;
+  RM_CRSHIT            = 10015;     //±¤Ç³Âü
+  RM_SITDOWN           = 10016;
+
+  RM_CPOWERHIT         = 10017;
+  RM_CFIREHIT          = 10018;
+  RM_TAGUHIT           = 10020;
+  RM_DEATH             = 10021;
+  RM_DOWN              = 10023; //¿ù¿µ¼ú
+  RM_SKELETON          = 10024;
+
+  RM_FISHING1           =10030;      //³¬½Ã
+  RM_FISHING2           =10031;      //³¬½Ã
+  RM_DEATHHIT          = 10037;     //»ì»ýµµ
+  RM_WBHIT             = 10044;    //Ç³°Ë¼ú
+  RM_WBHIT2            = 10047;     //Ç³°Ë¼ú
+  RM_SPEEDRUN          = 10049;    //°æ½Åº¸
+  RM_DOWNRUN           = 10057; //¿ù¿µ¼ú
+  RM_NANCRSHIT         = 10177; //³­È­Ç÷Ç³Âü
+
+  RM_CURSE             = 10042; // ÀúÁÖ¼ú
+
+
+  RM_LOGON             = 10050;
+  RM_ABILITY           = 10051;
+  RM_HEALTHSPELLCHANGED= 10052;
+  RM_DAYCHANGING       = 10053;
+  RM_81                = 10054;
+  RM_82                = 10055;
+  RM_83                = 10056;
+  RM_84                = 10058;
+  RM_85                = 10059;
+  RM_86                = 10061;
+  RM_CHANGEFAMEPOINT   = 10188;    //Å³/µ¥½º º¯È­(2010/12/05)
+  RM_CHANGEFAMEPOINT2  = 10189;    //Å³/µ¥½º º¯È­(2010/12/05)
+  RM_MAGICMOVE         = 20101;
+  RM_10101             = 10101;
+  RM_WEIGHTCHANGED     = 10115;
+  RM_FEATURECHANGED    = 10116;
+  RM_BUTCH             = 10119;
+  RM_MAGICFIRE         = 10120;
+  RM_MAGICFIREFAIL     = 10121;
+  RM_SENDMYMAGIC       = 10122;
+  RM_MAGIC_LVEXP       = 10123;
+  RM_SOUND             = 10124;
+  RM_DURACHANGE        = 10125;
+  RM_MERCHANTDLGCLOSE  = 10127;
+  RM_SENDGOODSLIST     = 10128;
+  RM_SENDUSERSELL      = 10129;
+  RM_SENDBUYPRICE      = 10130;
+  RM_USERSELLITEM_OK   = 10131;
+  RM_USERSELLITEM_FAIL = 10132;
+  RM_BUYITEM_SUCCESS   = 10133;
+  RM_BUYITEM_SUCCESS2  = 50133;
+  RM_AUCTIONGIVE       = 11133;
+  RM_BUYITEM_FAIL      = 10134;
+
+  RM_POINTCHANGED      = 10135;
+
+  RM_GOLDCHANGED       = 10136;
+  RM_CHANGELIGHT       = 10137;
+  RM_LAMPCHANGEDURA    = 10138;
+  RM_CHARSTATUSCHANGED = 10139;
+  RM_GROUPCANCEL       = 10140;   //±×·ì Äµ½½
+  RM_SENDUSERREPAIR    = 10141;
+
+  RM_SETPASSWORD       = 10152;      //Ã¢°í¾ÏÈ£
+  RM_INPUTPASSWORD     = 10558;      //Ã¢°í¾ÏÈ£
+
+  RM_SENDITEMLOCK      = 10445;
+  RM_USERITEMLOCK_OK   = 10446;
+  RM_USERITEMLOCK_FAIL = 10447;
+
+  RM_SENDUSERSREPAIR   = 50142;
+  RM_SENDREPAIRCOST    = 10142;
+  RM_USERREPAIRITEM_OK = 10143;
+  RM_USERREPAIRITEM_FAIL=10144;
+  RM_USERSTORAGEITEM   = 10146;
+  RM_USERGETBACKITEM   = 10147;
+  RM_SENDDELITEMLIST   = 10148;
+
+  RM_MAKEDRUG_SUCCESS  = 10150;
+  RM_MAKEDRUG_FAIL     = 10151;
+  RM_ALIVE             = 10153;
+
+  RM_SENDUSERMAKEITEMLIST = 10156;        //Á¦Á¶½ºÃÄ
+
+  RM_10155             = 10155;
+
+  RM_SENDUSERWAKEUP    = 10551;
+  SM_SENDUSERWAKEUP    = 10552;
+
+  RM_SENDWAKECOST = 10145;
+  RM_SENDUSERWAKE = 11110;
+  RM_USERITEMWAKE_OK = 10448;
+  RM_USERITEMWAKE_FAIL = 10449;
+
+  RM_SENDRESTORECOST = 11111;
+  RM_SENDUSERRESTORE = 11112;
+  RM_USERITEMRESTORE_FAIL = 11114;
+
+  //°¢¼ººÐÇØ
+  RM_PRICEDISASSEMBLE  = 10158;
+  RM_SENDUSERDISASSEMBLE = 10159;
+  RM_DISASSEMBLE_OK    = 10160;
+  RM_DISASSEMBLE_FAIL  = 10161;
+
+  //ÀÏ¹ÝºÐÇØ
+  RM_PRICEDISMANTLE    = 10162;
+  RM_SENDUSERDISMANTLE = 10163;
+  RM_DISMANTLE_OK      = 10164;
+
+  RM_SHOWRANKNAME      = 15232;
+  RM_DIGUP             = 10200;
+  RM_DIGDOWN           = 10201;
+  RM_FLYAXE            = 10202;
+  RM_LIGHTING          = 10204;
+  RM_10205             = 10205;
+  RM_LIGHTING_1        = 10209;   //ºñ¿ù¼ÒÈ£
+  RM_LIGHTING_2        = 10210;
+  RM_LIGHTING_3        = 10211;
+  RM_HEMORRHAGE_STRUCK = 10217;
+  RM_FOXSTATE          = 10212;
+
+  RM_THUNDER_STRUCK    = 10218;
+
+  RM_LIGHTING_4        = 10213;
+  RM_LIGHTING_5        = 10214;
+  RM_LIGHTING_6        = 10215;
+  RM_LIGHTING_7        = 10216;
+
+  RM_CHANGEGUILDNAME   = 10301;
+  RM_SUBABILITY        = 10302;
+  RM_BUILDGUILD_OK     = 10303;
+  RM_BUILDGUILD_FAIL   = 10304;
+  RM_DONATE_OK         = 10305;
+  RM_DONATE_FAIL       = 10306;
+
+
+  RM_ALIVEREQ          = 10307;
+  RM_MENU_OK           = 10309;
+  RM_SIMPLE_OK         = 10310;
+
+  RM_HOMEMOVE          = 10312;
+
+  RM_GUILDMARK_OK      = 10313;    //¹®ÆÄ ¸¶Å©
+  RM_GUILDMARK_FAIL    = 10314;
+
+  RM_RECONNECTION      = 10332;
+  RM_HIDEEVENT         = 10333;
+  RM_SHOWEVENT         = 10334;
+
+  RM_10401             = 10401;
+  RM_OPENHEALTH        = 10410;
+  RM_CLOSEHEALTH       = 10411;
+  RM_BREAKWEAPON       = 10413;
+  RM_CHANGEFACE        = 10415;
+  RM_PASSWORD          = 10416;
+
+  RM_ME_DBGETLIST         = 10420;  // »çÁ¦ ¸®½ºÆ®¿øÇÔ
+  RM_ME_DBDELETE          = 10421;  // »çÁ¦ ¸®½ºÆ®¿øÇÔ
+  RM_ME_LOGOUT            = 10422;  // »çÁ¦ ¸®½ºÆ®¿øÇÔ
+
+  RM_LM_DBDELETE          = 10423;  // ¿¬ÀÎ ¸®½ºÆ®¿øÇÔ
+  RM_LM_DBGETLIST         = 10424;  // ¿¬ÀÎ ¸®½ºÆ®¾òÀ½
+  RM_LM_LOGOUT            = 10425;  // ¿¬ÀÎ Á¾·á¸¦ ¾Ë·ÁÁÜ
+
+
+  RM_DRAGON_EXP        = 10430;  // ¿ë½Ã½ºÅÛ¿¡ °æÇèÄ¡ ÁØ´Ù.    //¸¶·æ
+  RM_LOOPNORMALEFFECT  = 10431;  //¼Ò»ý ÀÓÆåÆ® È¿°ú
+
+  RM_PLAYDICE          = 10500;
+
+  RM_SHOWEFFECT        = 10501;
+  //2003/02/11 ±×·ì¿ø À§Ä¡ Á¤º¸
+  RM_GROUPPOS             = 11010;
+  // Ä«¿îÆ® ¾ÆÀÌÅÛ
+  RM_COUNTERITEMCHANGE    = 11011;
+  RM_CANCLOSE_OK          = 11024;
+  RM_CANCLOSE_FAIL        = 11025;
+
+  RM_HEAR              = 11001;
+  RM_WHISPER           = 11002;
+  RM_CRY               = 11003;
+  RM_SYSMESSAGE        = 11004;
+  RM_GROUPMESSAGE      = 11005;      //±×·ì ¸Þ½ÃÁö
+  RM_SYSMESSAGE2       = 11006;
+  RM_GUILDMESSAGE      = 11007;
+  RM_SYSMESSAGE3       = 11008;
+  RM_MERCHANTSAY       = 11009;
+  RM_MOVEMESSAGE       = 10240;     //È­¸é°øÁö
+  RM_GUILDAILLY        = 11241;
+  RM_EXPRATE           = 7998;
+  RM_GROUPCALL         = 7999;
+  RM_ATTATCKMODE       = 8000;
+
+
+
+
+  RM_ZEN_BEE           = 8020;
+  RM_DELAYMAGIC        = 8021;
+  RM_STRUCK            = 8018;
+  RM_MAGSTRUCK_MINE    = 8030;
+  RM_MAGHEALING        = 8034;
+  RM_BOW               = 10029;
+  RM_DEFSOCKET         = 8035;
+  RM_DEFMESSAGE        = 8036;
+  RM_POISON            = 8037;
+  
+  RM_DOOPENHEALTH      = 8040;
+  RM_SPACEMOVE_FIRE2   = 8042;
+  RM_DELAYPUSHED       = 8043;
+  RM_MAGSTRUCK         = 8044;
+  RM_TRANSPARENT       = 8045;
+
+  RM_DOOROPEN          = 8046;
+  RM_DOORCLOSE         = 8047;
+  RM_DISAPPEAR         = 8061;
+  RM_SPACEMOVE_FIRE    = 8062;
+  RM_SENDUSEITEMS      = 8074;
+  RM_WINEXP            = 8075;
+  RM_ADJUST_BONUS      = 8078;
+  RM_ITEMSHOW          = 8082;
+  RM_GAMEGOLDCHANGED   = 8084;
+  RM_ITEMHIDE          = 8085;
+  RM_LEVELUP           = 8086;
+  RM_LEVELUP2          = 8088;   //µî¼±º¯È¯
+  RM_LEVELUP3          = 8089;   //º¸³Ê½ºÆ÷ÀÎÆ®
+
+  RM_CHANGENAMECOLOR   = 8090;
+  RM_PUSH              = 8092;
+
+
+  RM_CHANGEMAP2        = 8096;
+
+  RM_CLEAROBJECTS      = 8097;
+  RM_CHANGEMAP         = 8098;
+  RM_SPACEMOVE_SHOW2   = 8099;
+  RM_SPACEMOVE_SHOW    = 8100;
+  RM_USERNAME          = 8101;
+
+  RM_STRUCK_MAG        = 8103;
+  RM_RUSH              = 8104;
+  RM_RUSHKUNG          = 8105;
+
+  RM_TWINHIT           = 9042;
+  RM_BALDO             = 9045; //¹ßµµ¼ú
+  RM_BALDO2            = 9050; //¹ßµµ¼ú
+  RM_ToSendMsg         = 9051;//¹ßµµ¼ú
+
+  RM_THUNDERHIT        = 9052;//³ú·æºÀ¹ý
+  RM_FIRESHAOLIN       = 9053;//ÃµÈ­ºÀ¹ý
+  RM_CRBHIT            = 9054;//È¸Ç³ÃµºÀ¹ý
+
+  RM_LM_WHISPER        = 10060;    //¿¬ÀÎ ±Ó¼Ó¸»
+  RM_ME_WHISPER        = 10062;    //»çÁ¦ ±Ó¼Ó¸»
+
+  RM_GETMAKEGEMLIST    = 9044;
+  RM_SPACEMOVE_SHOW3   = 9045;//ÀÏ¼¶ÀÌµ¿
+  RM_SPACEMOVE_FIRE3   = 9046;//ÀÏ¼¶ÀÌµ¿
+  RM_SPACEMOVE_SHOW4   = 9047;
+  RM_SPACEMOVE_HIDE3   = 9048;
+  OS_EVENTOBJECT       = 1;
+  OS_MOVINGOBJECT      = 2;
+  OS_ITEMOBJECT        = 3;
+  OS_GATEOBJECT        = 4;
+  OS_MAPEVENT          = 5;
+  OS_DOOR              = 6;
+  OS_ROON              = 7;
+
+   //¿µ¿õ½Ã½ºÅÛ
+  RM_QUERYBAGITEMS     = 30001;
+  RM_MAKEGHOST         = 30004;
+  RM_HEROLOGOUT        = 30005;
+
+  RM_HEROLOGON         = 30024;
+  RM_HEROLOGON_OK      = 30025;
+
+  RM_HEROCREATE        = 30041;
+  RM_QUERYAUTOITEMS    = 30096;
+
+  SM_HEROAUTOITEMS   = 5095;
+  SM_HERODELMAGIC    = 6500;
+  SM_HEROWINEXP      = 6512;
+  SM_HEROLEVELUP     = 6514;
+  SM_HEROLOGON       = 6515;
+  SM_HEROADDMAGIC    = 6516;
+
+  SM_HEROUPDATEITEM  = 6517;
+  SM_SENDHEROUSEITEMS= 6518;
+  SM_HERODELITEMS    = 6519;
+  SM_HERODELITEM     = 6520;
+  SM_HEROADDITEM     = 6521;
+  SM_HEROADDITEM2    = 6165; //¿µ¿õ ¹°¾à
+  SM_SENDMYHEROMAGIC = 6522;
+
+  SM_HEROBAGITEMS    = 6523;
+  SM_HEROBAGITEMS2   = 6524;
+
+  SM_HEROLOGOUT_OK   = 6525;
+  SM_HEROLOGON_OK    = 6526;
+  SM_HEROLOGOUT      = 6527;
+  SM_HERODURACHANGE  = 5185;
+
+  SM_HEROABILITY     = 6528;
+  SM_HEROSUBABILITY  = 6529;
+  SM_HEROWEIGHTCHANGED = 6190;
+  SM_HEROEAT_OK      = 7000;          //³Ô¶«Î÷³É¹¦
+  SM_HEROEAT_FAIL    = 7001;          //³Ô¶«Î÷Ê§°Ü
+  SM_HEROCREATE      = 5222; //¿µ¿õ °í¿ëÃ¢
+  SM_HEROINFO        = 5224;
+
+  SM_HEROTAKEON_OK   = 5174;
+  SM_HEROTAKEON_FAIL = 5175;
+  SM_HEROTAKEOFF_OK  = 5176;
+  SM_HEROTAKEOFF_FAIL = 5177;
+
+  SM_MASTERBAGTOHEROBAG_OK = 5150; //ÁÖÀÎ > ¿µ¿õ °¡¹æÀ¸·Î
+  SM_MASTERBAGTOHEROBAG_FAIL = 5151; //ÁÖÀÎ > ¿µ¿õ °¡¹æ ÀÌµ¿ ½ÇÆÐ
+
+  SM_HEROBAGTOMASTERBAG_OK = 5152; //¿µ¿õ > ÁÖÀÎ °¡¹æÀ¸·Î
+  SM_HEROBAGTOMASTERBAG_FAIL = 5153; //¿µ¿õ > ÁÖÀÎ °¡¹æ ÀÌµ¿ ½ÇÆÐ
+  SM_HEROMAGIC_LVEXP = 5191;
+  SM_HEROAIMODE      = 5192;
+  SM_HEROBAGCOUNT    = 5162;
+  SM_HEROBUFF        = 5814;
+  SM_AUTODELITEM_OK    = 4072;
+  SM_AUTODELITEM_FAIL  = 4073;
+
+  SM_AUTOADDITEM_OK    = 4074;
+  SM_AUTOADDITEM_FAIL  = 4075;
+  SM_ADDHEROAUTO       = 4078;
+  SM_HEROAUTODELITEM   = 5093;
+  SM_HEROAUTOADDITEM   = 5094;
+
+  SM_DELHEROITEM      = 5097;
+
+  SM_HEROSTORAGEITEMS    = 5098;
+  SM_HEROSTORAGEITEMS2   = 5099;
+
+  SM_HERO_STORAGE_OK     = 5193;
+  SM_HERO_STORAGE_FULL   = 5194;
+  SM_HERO_STORAGE_FAIL   = 5195;
+  SM_ADDHEROSTORAGE      = 5196;
+  SM_ADDHEROSTORAGEITEM  = 5197;
+
+  SM_HERO_TAKEBACKSTORAGEITEM_OK      = 5705;
+  SM_HERO_TAKEBACKSTORAGEITEM_FAIL    = 5706;
+  SM_HERO_TAKEBACKSTORAGEITEM_FULLBAG = 5707;
+
+  CM_NEWHERO         = 5223;
+  CM_HEROLOGON_OK    = 5203;
+  CM_HEROLOGON       = 5135;   //¿µ¿õ ¼ÒÈ¯
+  CM_HEROLOGOUT      = 5136;  //¿µ¿õ ¼ÒÈ¯ÇØÁ¦
+  CM_QUERYHEROBAGITEMS = 5216;
+  CM_HEROPROTECT     = 5204;
+  CM_HEROTARGET      = 5146;
+  CM_HEROTURN        = 5326;
+  CM_HEROSPELL       = 6065;
+
+  CM_HEROSEPARITEM   = 5221;     //¿µ¿õ °¡¹æ ¹°¾à ºÐ¸®
+  CM_HEROBUNDLEITEM  = 5226; //¿µ¿õ ¹°¾à ÇÕÄ¡±â
+  CM_HEROBUNDLESTORAGEITEM = 5227;
+  CM_HEROEAT         = 5145;
+  CM_HEROAUTOEAT     = 5092;
+  CM_HEROTAKEONITEM  = 5139; //Ó¢ÐÛ´©×°±¸
+  CM_HEROTAKEOFFITEM = 5140; //Ó¢ÐÛÍÑ×°±¸
+  CM_MASTERBAGTOHEROBAG = 5137; //ÁÖÀÎ > ¿µ¿õ °¡¹æÀ¸·Î
+  CM_HEROBAGTOMASTERBAG = 5138; //¿µ¿õ > ÁÖÀÎ °¡¹æÀ¸·Î
+  CM_HEROMAGICKEYCHANGE = 5149;
+  CM_HEROAI = 5330;
+  CM_HEROCALL = 5209;
+  CM_HEROBACKCALL = 5210;
+  CM_MASTERDEFEN = 5225;   //¿µ¿õ ¼öÈ£
+
+  CM_AUTOADDITEM        = 4077;
+  CM_AUTODELITEM        = 4076;
+  CM_HEROUPGRADEIT      = 7078;
+  CM_GEMHEROITEM        = 7079;
+  CM_HEROSTORAGEITEM    = 7080;
+  CM_HEROTAKEBACKSTORAGEITEM = 7081;
+  //¹«°ø
+    //¹«°ø
+  SKILL_FIREBALL       = 1;  //È­¿°Àå
+  SKILL_HEALLING       = 2;  //È¸º¹¼ú
+  SKILL_ONESWORD       = 3;  //¿Ü¼ö°Ë¹ý
+  SKILL_ILKWANG        = 4;  //ÀÏ±¤°Ë¹ý
+  SKILL_FIREBALL2      = 5;  //±Ý°­È­¿°Àå
+  SKILL_AMYOUNSUL      = 6;  //¾Ï¿¬¼ú
+  SKILL_YEDO           = 7;  //¿¹µµ°Ë¹ý
+  SKILL_FIREWIND       = 8;  //È­¿°Ç³
+  SKILL_FIRE           = 9;  //¿°»çÀå
+  SKILL_SHOOTLIGHTEN   = 10; //·ÚÀÎÀå
+  SKILL_LIGHTENING     = 11; //°­°Ý
+  SKILL_ERGUM          = 12; //¾î°Ë¼ú
+  SKILL_FIRECHARM      = 13; //Æø»ì°è
+  SKILL_HANGMAJINBUB   = 14; //Ç×¸¶Áø¹ý
+  SKILL_DEJIWONHO      = 15; //´ëÁö¿øÈ£
+  SKILL_HOLYSHIELD     = 16; //°á°è
+  SKILL_SKELLETON      = 17; //¹é°ñ¼ÒÈ¯¼ú
+  SKILL_CLOAK          = 18; //Àº½Å¼ú
+  SKILL_BIGCLOAK       = 19; //´ëÀº½Å¼ú
+  SKILL_TAMMING        = 20; //·ÚÈ¥°Ý
+  SKILL_SPACEMOVE      = 21; //¾Æ°øÇà¹ý
+  SKILL_EARTHFIRE      = 22; //Áö¿°¼ú
+  SKILL_FIREBOOM       = 23; //Æø¿­ÆÄ
+  SKILL_LIGHTFLOWER    = 24; //·Ú¼³È­
+  SKILL_BANWOL         = 25; //¹Ý¿ù°Ë¹ý
+  SKILL_FIRESWORD      = 26; //¿°È­°á
+  SKILL_MOOTEBO        = 27; //¹«ÅÂº¸
+  SKILL_SHOWHP         = 28; //Å½±âÆÄ¿¬
+  SKILL_BIGHEALLING    = 29; //´ëÈ¸º¹¼ú
+  SKILL_SINSU          = 30; //½Å¼ö¼ÒÈ¯
+  SKILL_SHIELD         = 31; //ÁÖ¼úÀÇ¸·
+  SKILL_KILLUNDEAD     = 32; //»çÀÚÀ±È¸
+  SKILL_SNOWWIND       = 33; //ºù¼³Ç³
+  SKILL_CROSSMOON      = 34; //±¤Ç³Âü
+  SKILL_FLAMEDIS       = 35; //¸êÃµÈ­
+  SKILL_ENHANCER       = 36; //¹«±ØÁø±â
+  SKILL_ENERGYREPULSOR = 37; //±â°øÆÄ
+  SKILL_TWINBLADE      = 38; //½Ö·æÂü
+  SKILL_FROST          = 39; //°áºùÀå
+  SKILL_PURI           = 40; //Á¤È­¼ú
+  SKILL_ANGEL          = 41; //Á¤È¥¼ÒÈ¯¼ú
+  SKILL_MIRROR         = 42; //ºÐ½Å¼ú
+  SKILL_LION           = 43; //»çÀÚÈÄ
+  SKILL_BLADEAV        = 44; //°øÆÄ¼¶
+  SKILL_FLAMEFIELD     = 45; //È­·æ±â¿°
+  SKILL_CURSE          = 46; //ÀúÁÖ¼ú
+  SKILL_ENTRAP         = 47; //Æ÷½Â°Ë
+  SKILL_VAMP           = 48; //ÈíÇ÷¼ú
+  SKILL_HALLUC         = 49; //¹ÌÈ¥¼ú
+  SKILL_RAGE           = 50; //Ã·±âÆø
+  SKILL_PROTECTIONFIELD= 51; //È£½Å±â¸·
+  SKILL_ICESHOWER      = 52; //Ãµ»óºùÈ¯
+  SKILL_FIRESHOWER     = 53; //Ãµ»ó³«¿°
+  SKILL_RESURRECTION   = 54; //¼Ò»ý¼ú
+  SKILL_MASSPOISON     = 55; //µ¶¹«
+  SKILL_REDBANWOL      = 56; //ÀÏ¼¶
+  SKILL_WINDSTAINED    = 57; //ºù¿°¼ú
+  SKILL_SUNCHEN        = 58; //¼±Ãµ±â°ø
+  SKILL_JEOLMYEONG     = 59; //Àý¸í°Ë¹ý
+  SKILL_WINDBLADE      = 60; //Ç³°Ë¼ú
+  SKILL_BODDYWIND      = 61; //Ã¼½ÅÇ³
+  SKILL_BALDO          = 62; //¹ßµµ¼ú
+  SKILL_CHUNSWORD      = 63; //ÃµÀÌ°Ë
+  SKILL_FIREWINDSWORD  = 64; //¿­Ç³°Ý
+  SKILL_POBAKCUSTAIN   = 65; //Æ÷¹Ú¼ú
+  SKILL_MOONSHADOW     = 66; //¿ù¿µ¼ú
+  SKILL_VAMPMANA       = 67; //Èí±â
+  SKILL_KYEONGSIN      = 68; //°æ½Åº¸
+  SKILL_PUNGSIN        = 69; //Ç³½Å¼ú
+  SKILL_POISONBLADE    = 70; //¸Íµ¶°Ë±â
+  SKILL_SHADOW         = 71; //¿­È­½Å
+  SKILL_MOONBLADE      = 72; //¿ùÇÏ³­¹«
+  SKILL_CHENMU         = 73; //Ãµ¹«
+  SKILL_ABYSS          = 74; //½É¿¬¼ú
+  SKILL_ANGUISH        = 75; //¹ø³úÀÇ
+  SKILL_BLOODWIND      = 76; //Ç÷Ç³°Ý
+  SKILL_BLOODSWORD     = 77; //Ç÷·æ°Ë¹ý
+  SKILL_SKYSWORD       = 78; //Ãµ»óºñ¼ú
+  SKILL_BLOODWATER     = 79; //Ç÷·æ¼ö
+  SKILL_CATSWORD       = 80; //¹¦¼³¶õ
+  SKILL_KUMGANG        = 81; //±Ý°­ºÒ±«
+  SKILL_ROESEON        = 82; //·Ú¼±Ç³
+  SKILL_OHAENG         = 83; //À½¾ç¿ÀÇàÁø
+  SKILL_YEONGMU        = 84; //¿ù¿µ¹«
+  SKILL_BLASTHIT       = 85; //ÂüÁø°Ý
+  SKILL_ICESHOT        = 86; //ºù³úÃµ
+  SKILL_TAEGEUK        = 87; //ÅÂ±ØÁø
+  SKILL_FINALBUN       = 88; //ÀÏ°Ýºñ
+  SKILL_AUTHENTICITY   = 89; //ÁøÀ§º¸
+  SKILL_MAGSPACEMOVE   = 90; //ÀÌÇüÈ¯À§
+  SKILL_STING          = 91; //µ¶Ä§¼ú
+  SKILL_SUMMON         = 92; //°Ý°ø¼·¹°
+  SKILL_SUPERSWORD     = 93; //ºù¿ù°Ý    - Àü»ç
+  SKILL_HELL           = 94; //¸¸Ãµ¿°¿Á  - ¼ú»ç
+  SKILL_HEATHRECOVERY  = 95; //Èí¼º´ë¹ý  - µµ»ç
+  SKILL_SPELLRECOVERY  = 96; //°­¸¶Áø¹ý  - µµ»ç
+  SKILL_SURAKANGRIM    = 97; //¼ö¶ó°­¸²  - ÀÚ°´
+  SKILL_PENETRATE      = 98; //¸ÁÀÚÀÇ´«  - °øÅë
+  SKILL_WINDMOON       = 99; //Ã»Ç³¸í¿ù  - µµ»ç
+  SKILL_BLOODMOON      = 100;//ÀûÇ÷¹«¿µ  - µµ»ç
+  SKILL_DARKANGEL      = 101;//È¥·É¼ÒÈ¯¼ú - µµ»ç
+  SKILL_SHADOWTICK     = 102;//¿µÀûÃß - ÀÚ°´
+  SKILL_CKWIND         = 103;//Âü°Ý      - Àü»ç
+  SKILL_EYEFIELD       = 104;//³ú½ÅÇ÷    - ¼ú»ç
+  SKILL_TIGERHIT       = 105;//¹éÈ£°­Å¸  - µµ»ç
+  SKILL_KYO            = 106;//±³¾Ç      - ÀÚ°´
+  SKILL_SINGI          = 107;//½Å±â¹¦»ê  - Àü»ç
+  SKILL_STOM           = 108;//¿îÁß·Ú°Ý  - ¼ú»ç
+  SKILL_CLOUD          = 109;//¾Ïµ¶¸¸°è  - µµ»ç
+  SKILL_DEATHHIT       = 110;//»ì»ýµµ    - ÀÚ°´
+  SKILL_THUNDER        = 111;//³«·Ú
+
+  SKILL_GUKCHE         = 112;//°ÝÃ¼Àü°ø  - ½Â·Á
+  SKILL_SUNCHUNJIN     = 113;//¼±ÃµÁø±â  - ½Â·Á
+  SKILL_TAGUBONG       = 114;//Å¸±¸ºÀ¹ý  - ½Â·Á
+  SKILL_SONICWAVE      = 115;//¹ý·û¿¬°ø  - ½Â·Á
+  SKILL_EMBRACE        = 116;//³ªÇÑ±â°ø  - ½Â·Á
+  SKILL_THUNDERSHAILIN = 117;//³ú·æºÀ¹ý  - ½Â·Á
+  SKILL_PROTECTSHIELD  = 118;//È£½Å°­±â  - ½Â·Á
+  SKILL_FIRESHAOLIN    = 119;//ÃµÈ­ºÀ¹ý  - ½Â·Á
+  SKILL_SUPERSHAOLIN   = 120;//°í·Á¹«ÁøºÀ- ½Â·Á
+  SKILL_GREATWALL      = 121;//ÀºÇü¼ú    - ÀÚ°´
+  SKILL_THUNDERWAVE    = 122;//º¹È£Àå    - Àü»ç
+  SKILL_THUNDERCLAP    = 123;//°Ý°øÀå    - ¼ú»ç
+
+  SKILL_CROSSBONG      = 124;//È¸Ç³ÃµºÀ¹ý- µµ»ç
+  SKILL_THUSHAOLIN     = 125;//Á÷µµÈ²·æºÀ- ½Â·Á
+  SKILL_JUCKSAL        = 126;//ÃµÀÎÀû»ìÇ³- µµ»ç
+  SKILL_BEGUEKJANG     = 127;//ºñ°ÝÀå - ½Â·Á
+  SKILL_FAHWANGBO      = 128;//ÆÄÈ²º¸ - ½Â·Á
+  SKILL_KANGHO         = 129;//°­È£¼ú - ½Â·Á
+//============½Å±Ô¹«°ø====================
+  SKILL_UPREDBANWOL    = 130;//¸¶Ç÷±¤¼¶ - Àü»ç
+  SKILL_NANHWA         = 131;//³­È­Ç÷Ç³Âü - Àü»ç
+  SKILL_HWECHUN        = 132;//È¸Ãµ°Ý - Àü»ç
+
+  SKILL_FIREDRAGON     = 133;//È­·æÁøÇ³ - ¼ú»ç
+  SKILL_CHUNSANG       = 134;//Ãµ»óÆø¿° - ¼ú»ç
+  SKILL_THUNDERDOWN    = 135;//³«·ÚÃµ - ¼ú»ç
+
+  SKILL_JINGOL         = 136;//Áø°ñ¼ÒÈ¯¼ú - µµ»ç
+  SKILL_SUNCHUN        = 137;//¼±Ãµ - µµ»ç
+  SKILL_CHUNGONG       = 138;//Ãµ°ø - µµ»ç
+
+  SKILL_DARKDRAGON     = 139;//¿ë¼ÚÀ½ - ÀÚ°´
+  SKILL_SURA           = 140;//¼ö¶óÃµ¸êÁø - ÀÚ°´
+  SKILL_NANMU          = 141;//¸¶Ç÷³­¹« - ÀÚ°´
+
+{       Embrace
+  SKILL_BOWUP          = 112;//ÇÊÁß¼¶    - ±Ã¼ö
+  SKILL_CHUNBOW        = 113;//ÃµÀÏ¼¶    - ±Ã¼ö
+  SKILL_MUABOW         = 114;//¹«¾Æ¼¶    - ±Ã¼ö   }
+
+  LA_UNDEAD            = 1;
+
+  sENCYPTSCRIPTFLAG= '²»ÖªµÀÊÇÊ²Ã´×Ö·û´®';
+  sSTATUS_FAIL     = '+FAIL/';
+  sSTATUS_GOOD     = '+GOOD/';
+  nMAIL_LOCKED     = 1;
+  nMAIL_SPECIAL    = 2;
+
+
+  // Relationship Request Sequences...
+  RsReq_None      = 0;        // ±âº»»óÅÂ
+  RsReq_WantToJoinOther = 1;        // ´©±¸¿¡°Ô Âü°¡½ÅÃ»À» ÇÔ
+  RsReq_WaitAnser = 2;        // ÀÀ´äÀ» ±â´Ù¸²
+  RsReq_WhoWantJoin = 3;        // ´©±º°¡ Âü°¡¸¦ ¿øÇÔ
+  RsReq_AloowJoin = 4;        // Âü°¡¸¦ Çã¶ôÇÔ
+  RsReq_DenyJoin  = 5;        // Âü°¡¸¦ °ÅÀýÇÔ
+  RsReq_Cancel    = 6;        // Ãë¼Ò
+
+  RaReq_CancelTime  = 30 * 1000; // ÀÚµ¿ Ãë¼Ò ½Ã°£ 30ÃÊ msec
+  MAX_WAITTIME      = 60 * 1000; // ÃÖ´ë ±â´Ù¸®´Â ½Ã°£
+  // Relationship State Define...
+  RsState_None      = 0;         // ±âº»»óÅÂ
+  RsState_Lover     = 10;        // ¿¬ÀÎ
+  RsState_LoverEnd  = 11;        // ¿¬ÀÎÅ»Åð
+  RsState_Married   = 20;        // °áÈ¥
+  RsState_MarriedEnd = 21;        // °áÈ¥Å»Åð
+  RsState_Master    = 30;        // »çºÎ
+  RsState_MasterEnd = 31;        // »çºÎÅ»Åð
+  RsState_Pupil     = 40;        // Á¦ÀÚ
+  RsState_PupilEnd  = 41;        // Á¦ÀÚÅ»Åð
+  RsState_TempPupil = 50;        // ÀÓ½ÃÁ¦ÀÚ
+  RsState_TempPupilEnd = 51;        // ÀÓ½ÃÁ¦ÀÚÅ»Åð
+
+  // RelationShip Error Code...
+  RsError_SuccessJoin   = 1;         // Âü°¡¿¡ ¼º°øÇÏ¿´´Ù ( Âü°¡ÇÑ»ç¶÷ÂÊ)
+  RsError_SuccessJoined = 2;         // Âü°¡¿¡ ¼º°øµÇ¾îÁ³´Ù ( Âü°¡µÈ »ç¶÷ÂÊ)
+  RsError_DontJoin      = 3;         // Âü°¡ÇÒ¼ö ¾ø´Ù
+  RsError_DontLeave     = 4;         // ¶°³¯¼ö ¾ø´Ù.
+  RsError_RejectMe      = 5;         // °ÅºÎ»óÅÂÀÌ´Ù
+  RsError_RejectOther   = 6;         // °ÅºÎ»óÅÂÀÌ´Ù
+  RsError_LessLevelMe   = 7;         // ³ªÀÇ·¹º§ÀÌ ³·´Ù   ¶Ç´Â ³ªÀÇ ·¹º§ÀÌ ³ô´Ù
+  RsError_LessLevelOther = 8;         // »ó´ë¹æÀÇ·¹º§ÀÌ ³·´Ù
+  RsError_EqualSex      = 9;         // ¼ºº°ÀÌ °°´Ù
+  RsError_FullUser      = 10;        // Âü¿©ÀÎ¿øÀÌ °¡µæÃ¡´Ù
+  RsError_CancelJoin    = 11;        // Âü°¡Ãë¼Ò
+  RsError_DenyJoin      = 12;        // Âü°¡¸¦ °ÅÀýÇÔ
+  RsError_DontDelete    = 13;        // Å»Åð½ÃÅ³¼ö ¾ø´Ù.
+  RsError_SuccessDelete = 14;        // Å»Åð½ÃÄ×À½
+  RsError_NotRelationShip = 15;        // ±³Á¦»óÅÂ°¡ ¾Æ´Ï´Ù.
+
+
+  Error_SuccessJoin   = 1;         // Âü°¡¿¡ ¼º°øÇÏ¿´´Ù ( Âü°¡ÇÑ»ç¶÷ÂÊ)
+  Error_SuccessJoined = 2;         // Âü°¡¿¡ ¼º°øµÇ¾îÁ³´Ù ( Âü°¡µÈ »ç¶÷ÂÊ)
+  Error_DontJoin      = 3;         // Âü°¡ÇÒ¼ö ¾ø´Ù
+  Error_FullUserOther = 4;         // ÀÌ¹Ì »ó´ë »çÁ¦ °ü°è´Ù
+  Error_RejectOther   = 5;         // °ÅºÎ»óÅÂÀÌ´Ù
+  Error_HighLevelMe   = 6;         // ³ªÀÇ ·¹º§ÀÌ ³ô´Ù
+  Error_LessLevelOther = 7;        // »ó´ë¹æÀÇ·¹º§ÀÌ ³·´Ù
+  Error_FullUser      = 8;        // ÀÌ¹Ì »çÁ¦ °ü°è´Ù
+
+  Error_CancelJoin    = 9;        // Âü°¡Ãë¼Ò
+  Error_DenyJoin      = 10;        // Âü°¡¸¦ °ÅÀýÇÔ
+  Error_DontDelete    = 11;        // Å»Åð½ÃÅ³¼ö ¾ø´Ù.
+  Error_SuccessDelete = 12;        // Å»Åð½ÃÄ×À½
+  Error_NotRelationShip = 13;        // ±³Á¦»óÅÂ°¡ ¾Æ´Ï´Ù.
+  Error_RejectBroken   = 14;         // °áº°ÇØ¼­ 1ÀÏ µ¿¾È ¾ÈµÊ
+  Error_RejectMeBroken = 15;        // ³ª°áº°
+  Error_SuccessDelete2 = 16;        // Å»Åð½ÃÄ×À½
+
+
+  EFFECT_DEADLINESS = 10; //±¬»÷
+  EFFECT_VAMPIRE = 11; //ÎüÑª
+  EFFECT_MISSION_ACCEPT = 12; //½ÓÊÜÈÎÎñ
+  EFFECT_MISSION_NEXT = 13; //²½ÖèÍê³É
+  EFFECT_MISSION_COMPLETE = 14; //ÈÎÎñÍê³É
+  EFFECT_DARE_WIN = 15; //ÌôÕ½Ó®ÁË
+  EFFECT_DARE_LOSS = 16; //ÌôÕ½ÊäÁË
+  EFFECT_BEACON_1 = 17;   //ÔÝÁô
+  EFFECT_BEACON_2 = 18;   //±¦±¦Éý¼¶
+  EFFECT_BEACON_3 = 19;   //Ë«±¶¾­Ñé
+  EFFECT_BEACON_4 = 20;   //Ò»ÐÄÒ»Òâ
+  EFFECT_BEACON_5 = 21;   //ÐÄÐÄÏàÓ¡
+  EFFECT_BEACON_6 = 22;   //·É»ðÁ÷ÐÇ
+  EFFECT_BEACON_7 = 23;   //ÀËÂþÐÇÓê
+  EFFECT_BEACON_8 = 24;   //ç²ÃÎ»ÃÏë
+  EFFECT_BEACON_9 = 25;   //³¤¿Õ»ðÎè
+  EFFECT_BEACON_10 = 26;   //ÈçÎíËÆÃÎ
+  EFFECT_LEVELUP = 27; //ÈËÎïÉý¼¶
+  EFFECT_SHIELD = 28;   //³ªÇÑ±â°ø
+  EFFECT_MEDITATION = 29; //¼±ÃµÁø±â
+  EFFECT_THUNDERWAVE = 30; //º¹È£Àå
+
+type
+  pTAuctionItem=^TAuctionItem;
+  TAuctionItem = record
+    AuctionID: Integer;
+    StartTime: TDateTime;
+    EndTime: TDateTime;
+    Cost: Integer;
+    Seller: String[ActorNameLen];
+    Item: TClientItem;
+  end;
+
+  pTRentalItem=^TRentalItem;
+  TRentalItem = record
+    RentalID: Integer;
+    StartTime: TDateTime;
+    EndTime: TDateTime;
+    Owner: String[ActorNameLen];
+    Rentner: String[ActorNameLen];
+    Item: TClientItem;
+  end;
+
+  pTOwnerItem=^TOwnerItem;
+  TOwnerItem = record
+    RentalID: Integer;
+    StartTime: TDateTime;
+    EndTime: TDateTime;
+    Owner: String[ActorNameLen];
+    Rentner: String[ActorNameLen];
+    Withdraw: Boolean;
+    Item: TClientItem;
+  end;
+
+
+  pTPetInfo=^TPetInfo;     //¿µ¹°
+  TPetInfo = record
+    PetID: Integer;
+    StartTime: TDateTime;
+    EndTime: TDateTime;
+    PetName: String[ActorNameLen];
+    PetNumber: Integer;
+    Satiety: Integer;
+    Period: Integer;
+    ChangName: Integer;
+    SatietyLimit: integer;
+    EatRage: integer;
+  end;
+
+  pTComStorageItem=^TComStorageItem;     //°ø¿ëÃ¢°í
+  TComStorageItem = record
+    StorageID: Integer;
+    StartTime: TDateTime;
+    EndTime: TDateTime;
+    Item: TClientItem;
+  end;
+
+  pTGuildStorageItem=^TGuildStorageItem;   //¹®ÆÄÃ¢°í
+  TGuildStorageItem = record
+    GStorageID: Integer;
+    StartTime: TDateTime;
+    EndTime: TDateTime;
+    Item: TClientItem;
+  end;
+
+  PTWakeItem = ^TWakeItem;    //È¯»óÁ¡
+  TWakeItem =packed record
+    WakeItemName      :string[22];
+    WakeItemAmount    :word;
+    WakeItems         :TClientItem;
+  end;
+
+  PTDiceGameItem = ^TSeveShopItem;    //Ç÷·æ»óÀÚ
+  TDiceGameItem =packed record
+    ID            :Integer;
+    ItemName      :string[22];
+    Amount        :word;
+    Items         :TClientItem;
+  end;
+
+  TNewClientItem = packed record
+    s: TStdItem;
+    UserItem: TUserItem;
+  end;
+  pTNewClientItem = ^TNewClientItem;
+
+  PTSeveShopItem = ^TSeveShopItem;    //È¯»óÁ¡
+  TSeveShopItem =packed record
+    ShopItemName      :string[20];
+    ShopItemPrice     :Integer;
+    shopItemjob       :byte;
+    shopItemnew       :byte;
+    shopItemmode      :byte;
+    shopItemAmount    :word;
+    ShopSell          :Boolean;
+    ShopItems         :TClientItem;
+  end;
+
+  PTShopItem = ^TShopItem;        //È¯»óÁ¡
+  TShopItem =packed record
+    ShopItemPrice     :Integer;
+    shopItemjob       :byte;
+    shopItemnew       :byte;
+    shopItemmode      :byte;
+    ShopItem          :TClientItem;
+  end;
+  {
+  TDrawEffect = record       //´«¿À´ÂÀÌÆå
+    nIndex: Integer;
+    dwDrawTick: LongWord;
+  end;
+  pTDrawEffect = ^TDrawEffect;        }
+
+  PTFishing = ^TFishing;   //³¬½Ã
+  TFishing=packed record
+    FishName:string;
+    Probability:integer;
+  end;
+
+  pTMapItem=^TMapItem;
+  TMapItem=record
+    Name            :String[40];
+    Looks           :word;
+    AniCount        :byte;
+    Reserved        :integer;
+    Grade           :Byte;
+    Count           :integer;
+    DropBaseObject  :TObject;
+    OfBaseObject    :TObject;
+    dwCanPickUpTick :Dword;
+    UserItem        :TUserItem;
+  end;
+
+  pTBlockItem=^TBlockItem;
+  TBlockItem = record
+    Id        :Integer;
+    Owner     :String;  //³ª
+    Name      :String;  //°ÅºÎÀÚ
+  end;
+
+  pTGemSystem=^TGemSystem;
+  TGemSystem = record
+    Gem      :String;
+    Item1    :Integer;
+    Item2    :Integer;
+    Item3    :Integer;
+    Item4    :Integer;
+    Item5    :Integer;
+    Item6    :Integer;
+  end;
+
+  //º¯È¯¿¬±¸
+  pTChangeSystem=^TChangeSystem;
+  TChangeSystem = record
+    Item1    :Integer;
+    Item2    :Integer;
+    Item3    :Integer;
+    Item4    :Integer;
+    Item5    :Integer;
+    Item6    :Integer;
+  end;
+
+  pTUpwaiItem=^TUpwaiItem;    //Àç·Ã
+  TUpwaiItem = record
+    Names    :String[20];
+    ItemID   :Integer;
+  end;
+
+
+  pTseveGiveItem=^TseveGiveItem;       //È¯»óÁ¡
+  TseveGiveItem = packed record
+    annid     :Integer;
+    mename    :String[ActorNameLen];
+    Itemname  :String[22];
+    toname    :String[ActorNameLen];
+    Itemamon  :Byte;
+    Itemop    :Integer;
+  end;
+
+  pTGiveItem=^TGiveItem;          //È¯»óÁ¡
+  TGiveItem = packed record
+    annid     :Integer;
+    mename    :String[ActorNameLen];
+    Itemname  :String[22];
+    toname    :String[ActorNameLen];
+    Itemop    :Integer;
+    Item      :TClientItem;
+  end;
+
+  PTShopCart=^TShopCart;       //È¯»óÁ¡
+  TShopCart = record
+   Itemidx  :Integer;
+   mename   :string;
+   Itemname :string;
+   amoins   :string;
+  end;
+
+
+  pTDoorStatus=^TDoorStatus;
+  TDoorStatus=record
+    bo01:boolean;
+    n04:integer;
+    boOpened:Boolean;
+    dwOpenTick:dword;
+    nRefCount:integer;
+  end;
+
+  pTDoorInfo=^TDoorInfo;
+  TDoorInfo=record
+    nX,nY:Integer;
+    Status:pTDoorStatus;
+    nPoint:integer;
+  end;
+
+  pTMapFlag=^TMapFlag;
+  TMapFlag=record
+     boSAFE:Boolean;
+
+     boUnAllowStdItems: Boolean;    //»ç¿ë±ÝÁö1
+     sUnAllowStdItemsText: string;     //»ç¿ë±ÝÁö1
+     boNOTALLOWMAGIC: Boolean;          //»ç¿ë±ÝÁö2
+     sUnAllowMagicText: string;         //»ç¿ë±ÝÁö2
+
+     nL:integer;
+     nNEEDSETONFlag:integer;
+     nNeedONOFF:integer;
+     nMUSICID:integer;
+     nMAPGROUP: Integer;  //±×·ì ¸Ê
+     boSNOW: Boolean;        //´«¿À´ÂÀÌÆå
+     nSNOWLEVEL: Integer;   //´«¿À´ÂÀÌÆå
+     boFLOWER: Boolean;
+     nFLOWERLEVEL: Integer;
+     boGROUPCOUNT: Boolean;
+     nGROUPCOUNT: Integer;  //¸Ê ±×·ìÀÎ¿ø
+     boDarkness:boolean;
+     boDayLight:boolean;
+     AutoAttack  : integer;        //¸¶·æ¹ø°³
+     boFightZone:boolean;
+     boFight3Zone:boolean;
+     boPKZONE:boolean;
+     VailantZone:Boolean; //¿ë¸ÍÀÇÀüÀå
+     boQUIZ:boolean;
+     boNORECONNECT:boolean;
+     sNoReConnectMap:string;
+     boMUSIC:boolean;
+     boDEATHMATCH:Boolean; //µ¥½º¸ÅÄ¡
+     boNotGroup:Boolean;
+     boEXPRATE:boolean;
+     nEXPRATE:integer;
+     boPKWINLEVEL:boolean;
+     nPKWINLEVEL:integer;
+     boPKWINEXP:boolean;
+     nPKWINEXP:integer;
+     boPKLOSTLEVEL:boolean;
+     nPKLOSTLEVEL:integer;
+     boPKLOSTEXP:boolean;
+     nPKLOSTEXP:integer;
+     boDECHP:boolean;
+     nDECHPPOINT:integer;
+     nDECHPTIME:integer;
+     boINCHP:boolean;
+     nINCHPPOINT:integer;
+     nINCHPTIME:integer;
+     boDECGAMEGOLD:boolean;
+     nDECGAMEGOLD:integer;
+     nDECGAMEGOLDTIME:integer;
+     boDECGAMEPOINT:boolean;
+     nDECGAMEPOINT:integer;
+     nDECGAMEPOINTTIME:integer;
+     boINCGAMEGOLD:boolean;
+     nINCGAMEGOLD:integer;
+     nINCGAMEGOLDTIME:integer;
+     boINCGAMEPOINT:boolean;
+     nINCGAMEPOINT:integer;
+     nINCGAMEPOINTTIME:integer;
+     boINCPCPOINT:boolean;
+     nINCPCPOINT:integer;
+     nINCPCPOINTTIME:integer;
+     boRUNHUMAN:boolean;
+     boRUNMON:boolean;
+     boNEEDHOLE:boolean;
+     boNORECALL:boolean;
+     boNOGUILDRECALL:boolean;
+     boNODEARRECALL:boolean;
+     boNOMOVE:boolean;
+     boNORANDOMMOVE:boolean;
+     boNOCASTLEMOVE:boolean;
+     boNODRUG:boolean;
+     boMINE:boolean;
+     boMINE2:boolean;
+     boMINE3:boolean;
+     boMINE4:boolean;  //¼®ÃÊ±¤»ê
+     boNOPOSITIONMOVE:boolean;
+     boNODROPITEM:boolean;
+     boNOTHROWITEM:boolean;
+     boNOHORSE:Boolean;
+     boNOCHAT:Boolean;
+     boFISHEVENT:Boolean;   //³¬½Ã ÀÌº¥Æ®
+     boNOTIGER:Boolean;      //Å»°Í ºÒ°¡
+     boNOPENETRATE:Boolean; //¸ÁÀÚÀÇ¿Ê ºÒ°¡
+     boALLATTMAP:Boolean;
+     boNOREVIVAL:Boolean;   //ºÎÈ° ºÒ°¡
+     boNOHUMNOMON:Boolean; //ÓÐÈË²Å¿ªÊ¼Ë¢¹Ö
+     nGuildTerritory:Integer;
+     boOpenStore: Boolean; //°³ÀÎ»óÁ¡
+     boNoRecallHero: Boolean;
+  end;
+
+  TAddAbility=record
+     wHP,wMP:Word;
+     wHitPoint,wSpeedPoint:Word;
+     wAC,wMAC,wDC,wMC,wSC:DWord;
+     wAntiPoison,wPoisonRecover,
+     wPoisonIncrease,wFreezingIncrease,
+     wTox,wSlowDown,
+     wHealthRecover,wSpellRecover:Word;
+     wAntiMagic:Word;
+     btLuck,btUnLuck:Byte;
+     btWeaponStrong:BYTE;
+     nHitSpeed:Word;
+     UndeadPower:Byte;
+     Weight,WearWeight,HandWeight:Word;
+  end;
+
+  TCharName = string[ACTORNAMELEN + 1];
+  pTCharName = ^TCharName;
+
+  TCharName1 = record
+   sChrName: string[20];
+  end;
+  pTCharName1 = ^TCharName1;
+
+  TMsgColor=(c_Red,c_Green,c_Blue,c_White,c_RedWhite,c_BlueWhite,c_Pink,c_BlueGreen,c_GreenWhite,c_Green2);
+  TMsgType=(t_System,t_Notice,t_Hint,t_Say,t_Castle,t_Cust,t_Cust1,t_Cust2,t_GM,t_Mon,t_SVN1,t_SVN2,t_SVN3,t_TN);
+
+  pTProcessMessage=^TProcessMessage;
+  TProcessMessage=record
+     wIdent:word;
+     wParam:word;
+     nParam1:integer;
+     nParam2:integer;
+     nParam3:integer;
+     dwDeliveryTime:dword;
+     BaseObject:TObject;
+     boLateDelivery:Boolean;
+     sMsg:String;
+  end;
+
+  pTSessInfo=^TSessInfo;
+  TSessInfo=record
+     nSessionID       :Integer;
+     sAccount         :String[10];
+     sIPaddr          :String;
+     nPayMent         :integer;
+     nPayMode         :integer;
+     nSessionStatus   :integer;
+     dwStartTick      :dword;
+     dwActiveTick     :dword;
+     nRefCount        :integer;
+     nSocket          :integer;
+     nGateIdx         :integer;
+     nGSocketIdx      :integer;
+     dwNewUserTick    :dword;
+     nSoftVersionDate :integer;
+  end;
+
+  TScriptQuestInfo=record
+     wFlag:word;
+     btValue:byte;
+     nRandRage:integer;
+  end;
+  TQuestInfos=array of TScriptQuestInfo;
+
+  pTScript=^TScript;
+  TScript=record
+     boQuest:boolean;
+     QuestInfos:TQuestInfos;
+     RecordList:TList;
+     nQuest:Integer;
+  end;
+
+  pTGameCmd=^TGameCmd;
+  TGameCmd=record
+     sCmd           :String;
+     nPerMissionMin :integer;
+     nPerMissionMax :integer;
+  end;
+
+  TQuestUnitStatus = record
+    nQuestUnit: Integer;
+    boOpen: Boolean;
+  end;
+  pTQuestUnitStatus = ^TQuestUnitStatus;
+
+  TMapCondition = record
+    nHumStatus: Integer;
+    sItemName: string[14];
+    boNeedGroup: Boolean;
+  end;
+  pTMapCondition = ^TMapCondition;
+
+  TStartScript = record
+    nLable: Integer;
+    sLable: string[100];
+  end;
+
+  TMapEvent = record
+    m_sMapName: string[MAPNAMELEN];
+    m_nCurrX: Integer;
+    m_nCurrY: Integer;
+    m_nRange: Integer;
+    m_MapFlag: TQuestUnitStatus;
+    m_nRandomCount: Integer; //; ·¶Î§:(0 - 999999) 0 µÄ»úÂÊÎª100% ; Êý×ÖÔ½´ó£¬»úÂÊÔ½µÍ
+    m_Condition: TMapCondition; //´¥·¢Ìõ¼þ
+    m_StartScript: TStartScript;
+  end;
+  pTMapEvent = ^TMapEvent;
+
+  pTLoadDBInfo=^TLoadDBInfo;
+  TLoadDBInfo=record
+    nGateIdx:integer;
+    nSocket:integer;
+    sAccount:String[10];
+    sCharName:String[20];
+    sMsg: string;
+    nSessionID:integer;
+    sIPaddr:String[15];
+    nSoftVersionDate:integer;
+    nPayMent:integer;
+    nPayMode:integer;
+    nGSocketIdx:integer;
+    dwNewUserTick:dword;
+    PlayObject:TObject;
+    nReLoadCount:Integer;
+    HeroData: THeroDataType;
+    NPC: TObject;
+  end;
+
+  pTGoldChangeInfo=^TGoldChangeInfo;
+  TGoldChangeInfo=record
+     sGameMasterName:string;
+     sGetGoldUser:String;
+     nGold:integer;
+  end;
+
+  pTSetItems = ^TSetItems;
+  TSetItems = packed record
+    sHint: string[50];
+    Items: array[0..12] of string[22];     //¿ÊºÎÅÍ ~ ½Å¹ß±îÁö
+    Value: array[0..35] of Word;
+    HideValue: Boolean;
+  end;
+
+  pTSaveRcd=^TSaveRcd;
+  TSaveRcd=record
+    sAccount:String[16];
+    sChrName:String[20];
+    nSessionID:integer;
+    PlayObject:TObject;    //°ø°Ý ¸ðµå
+    HumanRcd:THumData;
+    nReTryCount:integer;
+  end;
+
+  pTMonGenInfo=^TMonGenInfo;
+  TMonGenInfo=record
+     sMapName:String;
+     nX,nY:Integer;
+     sMonName:String;
+     nRange:Integer;
+     nCount:Integer;
+     dwZenTime:dword;
+     nMissionGenRate:integer;
+     CertList:TList;
+     Envir:TObject;
+     nRace:integer;    //¸÷·¹ÀÌ½º
+     dwStartTick:dword;
+  end;
+
+  pTMonInfo=^TMonInfo;
+  TMonInfo=record
+    ItemList:TList;
+    sName:String;
+    btRace:Word;  //¸÷·¹ÀÌ½º
+    btRaceImg:Word;
+    wAppr:word;
+    wLevel:word;
+    btLifeAttrib:byte;
+    wCoolEye:word;
+    dwExp:dword;
+    wHP,wMP:Word;
+    wAC,wMAC,wDC,wMaxDC,wMC,wSC:Word;
+    wSpeed,wHitPoint,wWalkSpeed,wWalkStep,wWalkWait,wAttackSpeed:Word;
+    wAntiPush:Word;
+    boAggro,boTame,NoPoison:Boolean;
+  end;
+
+  pTMonItem=^TMonItem;
+  TMonItem=record
+    MaxPoint:integer;
+    SelPoint:integer;
+    ItemName:String;
+    Count:integer;
+  end;
+
+
+  //¾ÆÀÌÅÛÇÕ¼º
+  TCompoundInfo = record
+    Value1: array [0 .. 6] of LongWord;
+    Value2: array [0 .. 5] of Word;
+    Rate: array [0 .. 13] of Byte;
+    Value: Word;
+  end;
+  pTCompoundInfo = ^TCompoundInfo;
+
+  TCompoundInfos = array [1 .. 4] of TCompoundInfo;
+  pTCompoundInfos = ^TCompoundInfos;
+
+  TCompoundSet = record
+    Color: array [1 .. 4] of Byte;
+    Gold, GameGold: array [1 .. 4] of Integer;
+    DropRate: array [1 .. 4] of Byte;
+    ValueLimit: Integer;
+  end;
+
+  pTUnbindInfo=^TUnbindInfo;
+  TUnbindInfo=record
+    nUnbindCode  :Integer;
+    sItemName    :String;
+  end;
+
+  TUpgradeProb = record      //½ºÃÄ
+    iValue: array [0..5] of integer;
+    iBase: integer;
+  end;
+
+  TSlaveInfo=record
+    sSlaveName:String;
+    btSlaveLevel:byte;
+    dwRoyaltySec:dword;
+    nKillCount:integer;
+    btSlaveExpLevel:byte;
+    nHP,nMP:integer;
+  end;
+  pTSlaveInfo=^TSlaveInfo;
+
+  pTSwitchDataInfo=^TSwitchDataInfo;
+  TSwitchDataInfo=record
+     sMap:String;
+     wX,wY:word;
+     Abil:TAbility;
+     sChrName:String;
+     nCode:integer;
+     boC70:boolean;
+     boBanStoreShout:boolean;
+     boBanShout:boolean;
+     boHearWhisper:boolean;
+     boBanGuildChat:boolean;
+     boBanGroupChat:boolean;
+     boBanSysMsg:boolean;
+     boHearMsg:boolean;
+     boAdminMode:boolean;
+     boObMode:boolean;
+     BlockWhisperArr:array of string;
+     SlaveArr:array of TSlaveInfo;
+     StatusValue:Array [0..5] of word;
+     StatusTimeOut:array [0..5] of LongWord;
+     ExtraAbil: array[0..EXTRAABIL_SIZE-1] of byte;  //»ó½Â ´É·ÂÄ¡ °ª
+     ExtraAbilFlag: array[0..EXTRAABIL_SIZE-1] of byte; //ÇÃ·¡±×(Byte)
+     ExtraAbilTimes: array[0..EXTRAABIL_SIZE-1] of Longword; //ÀÏÁ¤½Ã°£µ¿¾È, ÆÄ±«,¸¶·Â,µµ·Â,°ø¼Ó,Ã¼·Â,¸¶·Â »ó½Â
+  end;
+
+  TCheckMsgClass = (tmc_Group, tmc_Friend, tmc_Guild, tmc_Time, tmc_Deal);
+
+  pTCheckMsg = ^TCheckMsg;
+  TCheckMsg = packed record
+    tClass: TCheckMsgClass;
+    AllPurpose: Pointer;
+    AddTime: LongWord;
+  end;
+
+  TIPaddr=record
+    sIpaddr:String;
+    dIPaddr:String;
+  end;
+
+  pTGateInfo=^TGateInfo;
+  TGateInfo=record
+    boUsed:Boolean;
+    Socket:TCustomWinSocket;
+    sAddr :String;
+    nPort :integer;
+    n520  :integer;
+    UserList :TList;
+    nUserCount :Integer;
+    Buffer:pchar;
+    nBuffLen:integer;
+    BufferList:TList;
+    boSendKeepAlive:Boolean;
+    nSendChecked:integer;
+    nSendBlockCount:integer;
+    dwStartTime:dword;
+    nSendMsgCount:integer;
+    nSendRemainCount:integer;
+    dwSendTick:Dword;
+    nSendMsgBytes:integer;
+    nSendBytesCount:integer;
+    nSendedMsgCount:integer;
+    nSendCount:integer;
+    dwSendCheckTick:dword;
+  end;
+
+  pTGateUserInfo=^TGateUserInfo;
+  TGateUserInfo=record
+     PlayObject:TObject;
+     nSessionID:integer;
+     sAccount:String[10];
+     nGSocketIdx:integer;
+     sIPaddr:string[15];
+     boCertification:boolean;
+     sCharName:String[20];
+     nClientVersion:integer;
+     SessInfo:pTSessInfo;
+     nSocket:integer;
+     FrontEngine:TObject;
+     UserEngine:TObject;
+     dwNewUserTick:Dword;
+  end;
+
+  TClassProc=procedure(Sender:TObject);
+
+
+  TCheckVersion=class
+
+  end;
+
+  TGameDataLog=function (p:Pchar;len:integer):Boolean;
+  TMainMessageProc=procedure (Msg:PChar;nMsgLen:Integer;nMode:Integer);stdcall;
+  TFindProcTableProc=function (ProcName:PChar;nNameLen:Integer):Pointer;stdcall;
+  TSetProcTableProc=function(ProcAddr:Pointer;ProcName:PChar;nNameLen:Integer):Boolean;stdcall;
+  TFindObj=function(ObjName:PChar;nNameLen:Integer):TObject;stdcall;
+  TPlugInit=function (hnd:THandle;p:TMainMessageProc;p2:TFindProcTableProc;p3:TSetProcTableProc;p4:TFindOBj):Pchar;
+  TDeCryptString=Procedure (src:Pointer;dest:pointer;srcLen:integer;var destLen:Integer);
+  TMsgProc=procedure (Msg:PChar;nMsgLen:Integer;nMode:Integer);stdcall;
+  TFindProc=function(sProcName:Pchar;len:Integer):Pointer;
+  TSetProc=function (ProcAddr:Pointer;ProcName:PChar;len:integer):Boolean;
+
+
+
+
+  TSpitMap=array [0..7] of array[0..4,0..4] of integer;
+
+  TLevelNeedExp=Array[1..500] of Longword;//dword;
+
+  TLevelNeedGuildExp=Array[1..35] of integer;//¹®ÆÄ¼ºÀå
+
+  TClientConf=record
+     boClientCanSet    :boolean;
+     boRunHuman        :boolean;
+     boRunMon          :boolean;
+     boRunNpc          :boolean;
+     boWarRunAll       :boolean;
+     btDieColor        :byte;
+     wSpellTime        :word;
+     wHitIime          :word;
+     wItemFlashTime    :word;
+     btItemSpeed       :byte;
+     boCanStartRun     :boolean;   //ÁúÁÖ?
+     boParalyCanRun    :boolean;
+     boParalyCanWalk   :boolean;
+     boParalyCanHit    :boolean;
+     boParalyCanSpell  :boolean;
+     boShowJobLevel    :boolean;
+     boDuraAlert       :boolean;
+     boMagicLock       :boolean;
+     boAutoPuckUpItem  :boolean;
+  end;
+
+  TRecallMigic=record
+    nHumLevel:integer;
+    sMonName:String;
+    nCount:integer;
+    nLevel:integer;
+  end;
+
+  pTM2Config=^TM2Config;
+  pTThreadInfo=^TThreadInfo;
+  TThreadInfo=Record
+    dwRunTick       :dword;
+    boTerminaled    :boolean;
+    nRunTime        :integer;
+    nMaxRunTime     :integer;
+    boActived       :boolean;
+    nRunFlag        :integer;
+    Config          :pTM2Config;
+    hThreadHandle   :THandle;
+    dwThreadID      :dword;
+  end;
+
+  TGlobaDyMval=Array of word;
+
+  TM2Config=record
+    nConfigSize             :integer;
+    sServerName             :String;
+    sServerIPaddr           :String;
+    sWebSite                :String;
+    sBbsSite                :String;
+    sClientDownload         :String;
+    sQQ                     :String;
+    sPhone                  :String;
+    sBankAccount0           :String;
+    sBankAccount1           :String;
+    sBankAccount2           :String;
+    sBankAccount3           :String;
+    sBankAccount4           :String;
+    sBankAccount5           :String;
+    sBankAccount6           :String;
+    sBankAccount7           :String;
+    sBankAccount8           :String;
+    sBankAccount9           :String;
+    nServerNumber           :integer;
+    boVentureServer         :boolean;
+    boTestServer            :boolean;
+    boServiceMode           :boolean;
+    boNonPKServer           :boolean;
+    nTestLevel              :integer;
+    nTestGold               :integer;
+    nTestUserLimit          :integer;
+    nUserLimit              :integer;   //À¯ÀúÁ¦ÇÑ
+    slim                    :String;
+    nSendBlock              :integer;
+    nCheckBlock             :integer;
+    boDropLargeBlock        :Boolean;
+    nAvailableBlock         :integer;
+    nGateLoad               :integer;
+    nUserFull               :integer;
+    nZenFastStep            :integer;
+    sGateAddr               :String[15];
+    nGatePort               :integer;
+    sDBAddr                 :String[15];
+    nDBPort                 :integer;
+    sIDSAddr                :String[15];
+    nIDSPort                :integer;
+    sMsgSrvAddr             :String[15];
+    nMsgSrvPort             :integer;
+    sLogServerAddr          :String[15];
+    nLogServerPort          :integer;
+    boDiscountForNightTime  :boolean;
+    nHalfFeeStart           :integer;
+    nHalfFeeEnd             :integer;
+    boTimeEventUse          :Boolean;   //Á¢¼Ó½Ã°£ ÀÌº¥Æ®»ç¿ë
+    nMinEvent               :integer;   //¸îºÐ¸¶´Ù?
+    nHourEvent              :integer;   //¸î½Ã°£¸¶´Ù?
+    nWakeUpRate             :integer;    //°¢¼º È®·ü
+    boViewHackMessage       :Boolean;
+    boViewAdmissionFailure  :Boolean;
+    sBaseDir                :String;
+    sGuildDir               :String;
+    sGuildFile              :String;
+    sVentureDir             :String;
+    sConLogDir              :String;
+    sCastleDir              :String;
+    sCastleFile             :String;
+    sEnvirDir               :String;
+    sMapDir                 :String;
+    sMapEIDir               :string;
+    sShandaMapDir           :string;
+    sNoticeDir              :String;
+    sLogDir                 :String;
+    sPlugDir                :String;
+    sClientFile1            :String;
+    sClientFile2            :String;
+    sClientFile3            :String;
+    sLevel50Effect          :integer; //·¹º§ 50 ÀÌÆÑÆ® ¼³Á¤
+    sLevel60Effect          :integer; //·¹º§ 60 ÀÌÆÑÆ® ¼³Á¤
+    sLevel70Effect          :integer; //·¹º§ 70 µî¼±ÀÌÆÑÆ® ¼³Á¤
+    sLevelComEffect         :integer;
+    sClothsMan              :String;
+    sClothsWoman            :String;
+    sWoodenSword            :String;
+    sAssassinWeapon         :String;
+    sBonzeWeapon            :String;
+    sCandle                 :String;
+    sBasicDrug              :String;
+    sGoldStone              :String;
+    sSilverStone            :String;
+    sSteelStone             :String;
+    sCopperStone            :String;
+    sBlackStone             :String;
+    sGreenStone             :String;
+    sGemStone1              :String;
+    sGemStone2              :String;
+    sGemStone3              :String;
+    sGemStone4              :String;
+
+    sLegendZuma             :Array[0..3] of String[ActorNameLen];
+    sZuma                   :Array[0..3] of String[ActorNameLen];
+    sPotMon                 :Array[0..19] of String[ActorNameLen];
+    sPotMon1                :Array[0..19] of String[ActorNameLen];
+    sBee                    :String[ActorNameLen];
+    sSpider                 :String[ActorNameLen];
+    sSpider2                :String[ActorNameLen];
+    sWoomaHorn              :String;
+    sZumaPiece              :String;
+    sGameGoldName           :String;
+    sGamePointName          :String;
+    sPCPointName            :String;
+    DBSocket                :integer;
+    nHealthFillTime         :integer;
+    nSpellFillTime          :integer;
+    nMonUpLvNeedKillBase    :integer;
+    nMonUpLvRate            :integer;
+    MonUpLvNeedKillCount    :Array[0..7] of integer;
+    SlaveColor              :Array[0..8] of Byte;
+    dwNeedExps              :TLevelNeedExp;
+    dwHeroNeedExps          :TLevelNeedExp;
+    dwNeedGuldExps          :TLevelNeedGuildExp;     //¹®ÆÄ¼ºÀå
+    WideAttack              :Array[0..2] of integer;
+    CrsAttack               :Array [0..6] of integer;
+    SpitMap                 :TSpitMap;
+    sHomeMap                :String;
+    nHomeX                  :integer;
+    nHomeY                  :integer;
+    sRedHomeMap             :String;
+    nRedHomeX               :integer;
+    nRedHomeY               :integer;
+    sRedDieHomeMap          :String;
+    nRedDieHomeX            :integer;
+    nRedDieHomeY            :integer;
+    boJobHomePoint          :Boolean;
+    sWarriorHomeMap         :String;
+    nWarriorHomeX           :integer;
+    nWarriorHomeY           :integer;
+    sWizardHomeMap          :String;
+    nWizardHomeX            :integer;
+    nWizardHomeY            :integer;
+    sTaoistHomeMap          :String;
+    nTaoistHomeX            :integer;
+    nTaoistHomeY            :integer;
+    sAssassinHomeMap        :String;       //ÀÚ°´
+    nAssassinHomeX          :integer;
+    nAssassinHomeY          :integer;
+    sBonzeHomeMap          :String;       //±Ã¼ö
+    nBonzeHomeX            :integer;
+    nBonzeHomeY            :integer;
+
+    dwDecPkPointTime        :dword;
+    nDecPkPointCount        :integer;
+    dwPKFlagTime            :dword;
+    nKillHumanAddPKPoint    :integer;
+    nKillHumanDecLuckPoint  :integer;
+    dwDecLightItemDrugTime  :dword;
+    nSafeZoneSize           :integer;
+    nStartPointSize         :integer;
+    dwHumanGetMsgTime       :dword;
+    nGroupMembersMax        :integer;
+    sFireBallSkill          :String[12];
+    sHealSkill              :String[12];
+    sRingSkill              :Array[0..10] of String[12];
+    ReNewNameColor          :Array[0..9] of byte;
+    dwReNewNameColorTime    :dword;
+    boReNewChangeColor      :boolean;
+    boReNewLevelClearExp    :boolean;
+    boNeutralityAttack      :boolean;
+    BonusAbilofWarr,
+    BonusAbilofWizard,
+    BonusAbilofTaos,
+    BonusAbilofAssassin,
+    BonusAbilofBonze,
+    NakedAbilofWarr,
+    NakedAbilofWizard,
+    NakedAbilofTaos,
+    NakedAbilofAssassin,
+    NakedAbilofBonze       :TNakedAbility;
+    nUpgradeWeaponMaxPoint  :integer;
+    nUpgradeWeaponPrice     :integer;
+    dwUPgradeWeaponGetBackTime     :dword;
+    nClearExpireUpgradeWeaponDays  :integer;
+    nUpgradeWeaponDCRate           :integer;
+    nUpgradeWeaponDCTwoPointRate   :integer;
+    nUpgradeWeaponDCThreePointRate :integer;
+    nUpgradeWeaponSCRate           :integer;
+    nUpgradeWeaponSCTwoPointRate   :integer;
+    nUpgradeWeaponSCThreePointRate :integer;
+    nUpgradeWeaponMCRate           :integer;
+    nUpgradeWeaponMCTwoPointRate   :integer;
+    nUpgradeWeaponMCThreePointRate :integer;
+    dwProcessMonstersTime          :dword;
+    dwRegenMonstersTime            :dword;
+    nMonGenRate                    :integer;
+    nProcessMonRandRate            :integer;
+    nProcessMonLimitCount          :integer;
+    nSoftVersionDate               :integer;
+    boCanOldClientLogon            :boolean;
+    dwConsoleShowUserCountTime     :dword;
+    dwShowLineNoticeTime           :dword;
+    nLineNoticeColor               :integer;
+    nStartCastlewarDay             :Array[0..2] of byte;
+    nStartCastlewarTime            :integer;
+    nStartCastlewarMin             :integer;
+    dwCastleFlagRegenTime          :dword;
+    dwShowCastleWarEndMsgTime      :dword;
+    dwCastleWarTime                :dword;
+    dwGuildWarTime                 :dword;
+    nBuildGuildPrice               :integer;
+    nGuildMarkPrice                :integer;   //¹®ÆÄ ¸¶Å© °¡°Ý
+    nGuildWarPrice                 :integer;
+    nMakeDurgPrice                 :integer;
+    nHumanMaxGold                  :integer;
+    nHumanTryModeMaxGold           :integer;
+    nTryModeLevel                  :integer;
+    boTryModeUseStorage            :boolean;
+    nCanShoutMsgLevel              :integer;
+    boShowMakeItemMsg              :boolean;
+    boShutRedMsgShowGMName         :boolean;
+    nSayMsgMaxLen                  :integer;
+    dwSayMsgTime                   :dword;
+    nSayMsgCount                   :integer;
+    dwDisableSayMsgTime            :dword;
+    nSayRedMsgMaxLen               :integer;
+    boShowGuildName                :boolean;
+    boShowRankLevelName            :boolean;
+    boShowColumnName               :boolean;   //Ä®·³ÀÌ¸§
+    boMonSayMsg                    :boolean;
+    nStartPermission               :integer;
+    boKillHumanWinLevel            :boolean;
+    boKilledLostLevel              :boolean;
+    boPKServer                     :boolean;   //Å³µ¥½º ¸ðµå
+    nFishSuccess                   :integer;   //³¬½Ã È®·ü ÀÌº¥Æ®(¿î¿µÀÚ °ÇÆ®·Ñ)
+    boKillHumanWinExp              :boolean;
+    boKilledLostExp                :boolean;
+    nKillHumanWinLevel             :integer;
+    nKilledLostLevel               :integer;
+    nKillHumanWinExp               :integer;
+    nKillHumanLostExp              :integer;
+    nHumanLevelDiffer              :integer;
+    nMonsterPowerRate              :integer;
+    nItemsPowerRate                :integer;
+    nItemsACPowerRate              :integer;
+    boSendOnlineCount              :boolean;
+    nSendOnlineCountRate           :integer;
+    dwSendOnlineTime               :dword;
+    dwSaveHumanRcdTime             :dword;
+    dwHumanFreeDelayTime           :dword;
+    dwMakeGhostTime                :dword;
+    dwClearDropOnFloorItemTime     :dword;
+    dwFloorItemCanPickUpTime       :dword;
+    dwEatTick: LongWord;
+    boPasswordLockSystem           :boolean;  //Ã¢°í¾ÏÈ£
+    boLockDealAction               :boolean;  //ÊÇ·ñËø¶¨½»Ò×²Ù×÷
+    boLockDropAction               :boolean;  //ÊÇ·ñËø¶¨ÈÓÎïÆ·²Ù×÷
+    boLockGetBackItemAction        :boolean;  //ÊÇ·ñËø¶¨È¡²Ö¿â²Ù×÷
+    boLockHumanLogin               :boolean;  //ÊÇ·ñËø¶¨×ß²Ù×÷
+    boLockWalkAction               :boolean;  //ÊÇ·ñËø¶¨×ß²Ù×÷
+    boLockRunAction                :boolean;  //ÊÇ·ñËø¶¨ÅÜ²Ù×÷
+    boLockHitAction                :boolean;  //ÊÇ·ñËø¶¨¹¥»÷²Ù×÷
+    boLockSpellAction              :boolean;  //ÊÇ·ñËø¶¨Ä§·¨²Ù×÷
+    boLockSendMsgAction            :boolean;  //ÊÇ·ñËø¶¨·¢ÐÅÏ¢²Ù×÷
+    boLockUserItemAction           :boolean;  //ÊÇ·ñËø¶¨Ê¹ÓÃÎïÆ·²Ù×÷
+    boLockInObModeAction           :boolean;  //Ëø¶¨Ê±½øÈëÒþÉí×´Ì¬
+    nPasswordErrorCountLock        :integer;  //ÊäÈëÃÜÂë´íÎó³¬¹ý Ö¸¶¨´ÎÊýÔòËø¶¨ÃÜÂë
+    nBonusPointHack                :integer;
+    nMobGenCount                   :integer;     //°ü¸®ÀÚ½Ã½ºÅÛ º¯°æ
+    boPasswordErrorKick            :boolean;  //ÊäÈëÃÜÂë´íÎó³¬¹ýÏÞÖÆÔòÌßÏÂÏß
+    nSendRefMsgRange               :integer;
+    boDecLampDura                  :boolean;
+
+    boDiableHumanRun               :boolean;
+    boRunHuman                     :boolean;
+    boRunMon                       :boolean;
+    boRunNpc                       :boolean;
+    boRunGuard                     :boolean;
+    boWarDisHumRun                 :boolean;
+    boGMRunAll                     :boolean;
+    boSafeZoneRunAll               :Boolean;
+    dwTryRentalTime                :dword;   //´ë¿©
+    dwRentalOKTime                 :dword;   //´ë¿©
+    dwTryDealTime                  :dword;
+    dwDealOKTime                   :dword;
+    boCanNotGetBackDeal            :boolean;
+    boDisableDeal                  :boolean;
+    nMasterOKLevel                 :integer;
+    nMasterOKCreditPoint           :integer;
+    nMasterOKBonusPoint            :integer;
+    boPKLevelProtect               :boolean;
+    nPKProtectLevel                :integer;
+    nLoverRecallTime                :integer;    //¿¬ÀÎ ¼ÒÈ¯ µô·¹ÀÌ
+    nMasterLevel                   :integer;  //»çÁ¦ ·¹º§
+    nRedPKProtectLevel             :integer;
+    nItemPowerRate                 :integer;
+    nItemExpRate                   :integer;
+    nScriptGotoCountLimit          :integer;
+    btHearMsgFColor                :byte; //Ç°¾°
+    btHearMsgBColor                :byte; //±³¾°
+    btWhisperMsgFColor             :byte; //Ç°¾°
+    btWhisperMsgBColor             :byte; //±³¾°
+    btGMWhisperMsgFColor           :byte; //Ç°¾°
+    btGMWhisperMsgBColor           :byte; //±³¾°
+    btCryMsgFColor                 :byte; //Ç°¾°
+    btCryMsgBColor                 :byte; //±³¾°
+    btGreenMsgFColor               :byte; //Ç°¾°
+    btGreenMsgBColor               :byte; //±³¾°
+    btBlueMsgFColor                :byte; //Ç°¾°
+    btBlueMsgBColor                :byte; //±³¾°
+    btRedMsgFColor                 :byte; //Ç°¾°
+    btRedMsgBColor                 :byte; //±³¾°
+    btGuildMsgFColor               :byte; //Ç°¾°
+    btGuildMsgBColor               :byte; //±³¾°
+    btGroupMsgFColor               :byte; //Ç°¾°
+    btGroupMsgBColor               :byte; //±³¾°
+    btCustMsgFColor                :byte; //Ç°¾°
+    btCustMsgBColor                :byte; //±³¾°
+    btCustMsg1FColor               :byte; //Ç°¾°
+    btCustMsg1BColor               :byte; //±³¾°
+    btAllGuildMsgFColor            :byte; //Ç°¾°
+    btAllGuildMsgBColor            :byte;
+    nMonRandomAddValue             :integer;
+    nMakeRandomAddValue            :integer;
+    nWeaponDCAddValueMaxLimit      :integer;
+    nWeaponDCAddValueRate          :integer;
+    nWeaponMCAddValueMaxLimit      :integer;
+    nWeaponMCAddValueRate          :integer;
+    nWeaponSCAddValueMaxLimit      :integer;
+    nWeaponSCAddValueRate          :integer;
+    nDressDCAddRate                :integer;
+    nDressDCAddValueMaxLimit       :integer;
+    nDressDCAddValueRate           :integer;
+    nDressMCAddRate                :integer;
+    nDressMCAddValueMaxLimit       :integer;
+    nDressMCAddValueRate           :integer;
+    nDressSCAddRate                :integer;
+    nDressSCAddValueMaxLimit       :integer;
+    nDressSCAddValueRate           :integer;
+    nNeckLace202124DCAddRate                    :integer;
+    nNeckLace202124DCAddValueMaxLimit           :integer;
+    nNeckLace202124DCAddValueRate               :integer;
+    nNeckLace202124MCAddRate                    :integer;
+    nNeckLace202124MCAddValueMaxLimit           :integer;
+    nNeckLace202124MCAddValueRate               :integer;
+    nNeckLace202124SCAddRate                    :integer;
+    nNeckLace202124SCAddValueMaxLimit           :integer;
+    nNeckLace202124SCAddValueRate               :integer;
+    nNeckLace19DCAddRate                    :integer;
+    nNeckLace19DCAddValueMaxLimit           :integer;
+    nNeckLace19DCAddValueRate               :integer;
+    nNeckLace19MCAddRate                    :integer;
+    nNeckLace19MCAddValueMaxLimit           :integer;
+    nNeckLace19MCAddValueRate               :integer;
+    nNeckLace19SCAddRate                    :integer;
+    nNeckLace19SCAddValueMaxLimit           :integer;
+    nNeckLace19SCAddValueRate               :integer;
+    nArmRing26DCAddRate                    :integer;
+    nArmRing26DCAddValueMaxLimit           :integer;
+    nArmRing26DCAddValueRate               :integer;
+    nArmRing26MCAddRate                    :integer;
+    nArmRing26MCAddValueMaxLimit           :integer;
+    nArmRing26MCAddValueRate               :integer;
+    nArmRing26SCAddRate                    :integer;
+    nArmRing26SCAddValueMaxLimit           :integer;
+    nArmRing26SCAddValueRate               :integer;
+    nRing22DCAddRate                    :integer;
+    nRing22DCAddValueMaxLimit           :integer;
+    nRing22DCAddValueRate               :integer;
+    nRing22MCAddRate                    :integer;
+    nRing22MCAddValueMaxLimit           :integer;
+    nRing22MCAddValueRate               :integer;
+    nRing22SCAddRate                    :integer;
+    nRing22SCAddValueMaxLimit           :integer;
+    nRing22SCAddValueRate               :integer;
+    nRing23DCAddRate                    :integer;
+    nRing23DCAddValueMaxLimit           :integer;
+    nRing23DCAddValueRate               :integer;
+    nRing23MCAddRate                    :integer;
+    nRing23MCAddValueMaxLimit           :integer;
+    nRing23MCAddValueRate               :integer;
+    nRing23SCAddRate                    :integer;
+    nRing23SCAddValueMaxLimit           :integer;
+    nRing23SCAddValueRate               :integer;
+    nHelMetDCAddRate                    :integer;
+    nHelMetDCAddValueMaxLimit           :integer;
+    nHelMetDCAddValueRate               :integer;
+    nHelMetMCAddRate                    :integer;
+    nHelMetMCAddValueMaxLimit           :integer;
+    nHelMetMCAddValueRate               :integer;
+    nHelMetSCAddRate                    :integer;
+    nHelMetSCAddValueMaxLimit           :integer;
+    nHelMetSCAddValueRate               :integer;
+
+
+    nUnknowHelMetACAddValueMin1Limit    :integer;
+    nUnknowHelMetACAddValueMax1Limit    :integer;
+    nUnknowHelMetACAddValueMin2Limit    :integer;
+    nUnknowHelMetACAddValueMax2Limit    :integer;
+
+    nUnknowHelMetMACAddValueMinLimit    :integer;
+    nUnknowHelMetMACAddValueMaxLimit    :integer;
+    nUnknowHelMetDCAddValueMinLimit     :integer;
+    nUnknowHelMetDCAddValueMaxLimit     :integer;
+    nUnknowHelMetMCAddValueMinLimit     :integer;
+    nUnknowHelMetMCAddValueMaxLimit     :integer;
+    nUnknowHelMetSCAddValueMinLimit     :integer;
+    nUnknowHelMetSCAddValueMaxLimit     :integer;
+
+    nUnknowRingDCAddValueMinLimit       :integer;
+    nUnknowRingDCAddValueMaxLimit       :integer;
+    nUnknowRingMCAddValueMinLimit       :integer;
+    nUnknowRingMCAddValueMaxLimit       :integer;
+    nUnknowRingSCAddValueMinLimit       :integer;
+    nUnknowRingSCAddValueMaxLimit       :integer;
+
+    nUnknowNecklaceACAddValueMinLimit   :integer;
+    nUnknowNecklaceACAddValueMaxLimit   :integer;
+    nUnknowNecklaceMACAddValueMinLimit  :integer;
+    nUnknowNecklaceMACAddValueMaxLimit  :integer;
+    nUnknowNecklaceDCAddValueMinLimit   :integer;
+    nUnknowNecklaceDCAddValueMaxLimit   :integer;
+    nUnknowNecklaceMCAddValueMinLimit   :integer;
+    nUnknowNecklaceMCAddValueMaxLimit   :integer;
+    nUnknowNecklaceSCAddValueMinLimit   :integer;
+    nUnknowNecklaceSCAddValueMaxLimit   :integer;
+
+
+    nMonOneDropGoldCount                :integer;
+    nMakeMineHitRate                    :integer; //ÍÚ¿óÃüÖÐÂÊ
+    nMakeMineRate                       :integer; //ÍÚ¿óÂÊ
+    nStoneTypeRate                      :integer;
+    nStoneTypeRateMin                   :integer;
+    nGoldStoneMin                       :integer;
+    nGoldStoneMax                       :integer;
+    nSilverStoneMin                     :integer;
+    nSilverStoneMax                     :integer;
+    nSteelStoneMin                      :integer;
+    nSteelStoneMax                      :integer;
+    nBlackStoneMin                      :integer;
+    nBlackStoneMax                      :integer;
+    nStoneMinDura                       :integer;
+    nStoneGeneralDuraRate               :integer;
+    nStoneAddDuraRate                   :integer;
+    nStoneAddDuraMax                    :integer;
+    nWinLottery6Min                     :integer;
+    nWinLottery6Max                     :integer;
+    nWinLottery5Min                     :integer;
+    nWinLottery5Max                     :integer;
+    nWinLottery4Min                     :integer;
+    nWinLottery4Max                     :integer;
+    nWinLottery3Min                     :integer;
+    nWinLottery3Max                     :integer;
+    nWinLottery2Min                     :integer;
+    nWinLottery2Max                     :integer;
+    nWinLottery1Min                     :integer;
+    nWinLottery1Max                     :integer;//16180 + 1820;
+    nWinLottery1Gold                    :integer;
+    nWinLottery2Gold                    :integer;
+    nWinLottery3Gold                    :integer;
+    nWinLottery4Gold                    :integer;
+    nWinLottery5Gold                    :integer;
+    nWinLottery6Gold                    :integer;
+    nWinLotteryRate                     :integer;
+    nWinLotteryCount                    :integer;
+    nNoWinLotteryCount                  :integer;
+    nWinLotteryLevel1                   :integer;
+    nWinLotteryLevel2                   :integer;
+    nWinLotteryLevel3                   :integer;
+    nWinLotteryLevel4                   :integer;
+    nWinLotteryLevel5                   :integer;
+    nWinLotteryLevel6                   :integer;
+
+
+    nMagMassPoisonDelay                 :integer;   //µ¶¹« µô·¹ÀÌ
+
+    GlobalVal                           :Array[0..19] of integer;
+    GlobalAVal                          :array[0..99] of string; //Ã³¸®
+    nItemNumber                         :integer;
+    nItemNumberEx                       :integer;
+    nGuildRecallTime                    :integer;
+    nGroupRecallTime                    :integer;
+    boControlDropItem                   :boolean;
+    boInSafeDisableDrop                 :boolean;
+    nCanDropGold                        :integer;
+    nCanDropPrice                       :integer;
+    boSendCustemMsg                     :boolean;
+    boSubkMasterSendMsg                 :boolean;
+    nSuperRepairPriceRate               :integer; //ÌØÐÞ¼Û¸ñ±¶Êý
+    nRepairItemDecDura                  :integer; //ÆÕÍ¨ÐÞÀíµô³Ö¾ÃÊý(ÌØ³Ö¾ÃÉÏÏÞ¼õÏÂÏÞÔÙ³ýÒÔ´ËÊýÎª¼õµÄÊýÖµ)
+    boDieScatterBag                     :boolean;
+    nDieScatterBagRate                  :integer;
+    boDieRedScatterBagAll               :boolean;
+    Reserved64dell                      :boolean;
+    nDieDropUseItemRate                 :integer;
+    nDieRedDropUseItemRate              :integer;
+    boDieDropGold                       :boolean;
+    boKillByHumanDropUseItem            :boolean;
+    boKillByMonstDropUseItem            :boolean;
+    boKickExpireHuman                   :boolean;
+    nGuildRankNameLen                   :integer;
+    nGuildMemberMaxLimit                :integer;
+    nGuildNameLen                       :integer;
+    nCastleNameLen                      :Integer;
+    nAttackPosionRate                   :integer;
+    nAttackPosionTime                   :integer;
+    nAttackSuperPosionRate              :integer;
+    dwRevivalTime                       :dword; //¸´»î¼ä¸ôÊ±¼ä
+    boUserMoveCanDupObj                 :boolean;
+    boUserMoveCanOnItem                 :boolean;
+    dwUserMoveTime                      :integer;
+    dwPKDieLostExpRate                  :integer;
+    nPKDieLostLevelRate                 :integer;
+    btPKFlagNameColor                   :Byte;
+    btPKLevel1NameColor                 :Byte;
+    btPKLevel2NameColor                 :Byte;
+    btAllyAndGuildNameColor             :Byte;
+    btWarGuildNameColor                 :Byte;
+    btCatleGuildNameColor               :Byte;  //»çºÏ¹® ÀÌ¸§»ö
+    btNamCatleGuildNameColor            :Byte;  //³²¸¸¹® ÀÌ¸§»ö
+    btKingCatleGuildNameColor           :Byte;  //Á¤º¹ÀÚ ÀÌ¸§»ö
+    btCatleWarGuildNameColor            :Byte;
+    btInFreePKAreaNameColor             :Byte;
+    boSpiritMutiny                      :boolean;
+    dwSpiritMutinyTime                  :dword;
+    nSpiritPowerRate                    :integer;
+    boMasterDieMutiny                   :boolean;
+    nMasterDieMutinyRate                :integer;
+    nMasterDieMutinyPower               :integer;
+    nMasterDieMutinySpeed               :integer;
+    boOldClientShowHiLevel              :boolean;
+    boShowScriptActionMsg               :boolean;
+    nRunSocketDieLoopLimit              :integer;
+    boThreadRun                         :boolean;
+    boShowExceptionMsg                  :boolean;
+    boShowPreFixMsg                     :boolean;
+    nMagicAttackRage                    :integer; //Ä§·¨Ëø¶¨·¶Î§
+    sSkeleton                           :String[ActorNameLen];
+    sJinSkeleton                        :String[ActorNameLen];
+    nSkeletonCount                      :integer;
+    SkeletonArray                       :array[0..9] of TRecallMigic;
+    sDragon                             :String[ActorNameLen];
+    sDragon1                            :String[ActorNameLen];
+    nDragonCount                        :integer;
+    DragonArray                         :array[0..9] of TRecallMigic;
+    sAngel                              :String[ActorNameLen];
+    sDarkAngel                          :String[ActorNameLen];
+    sGuard45                            :String[ActorNameLen];
+    sGuard50                            :String[ActorNameLen];
+    sGuard55                            :String[ActorNameLen];
+    sGuard60                            :String[ActorNameLen];
+    sArcher45                           :String[ActorNameLen];
+    sArcher50                           :String[ActorNameLen];
+    sArcher55                           :String[ActorNameLen];
+    sArcher60                           :String[ActorNameLen];
+    SClone                              :String[ActorNameLen];
+    SCloneAssassin                      :String[ActorNameLen];
+    sBonzeClone                         :String[ActorNameLen];
+    sBonzeMob                           :String[ActorNameLen];
+    nAmyOunsulPoint                     :integer;
+    boDisableInSafeZoneFireCross        :boolean;
+    boGroupMbAttackPlayObject           :boolean;
+
+    dwPosionDecHealthTime               :dword;
+    nPosionDamagarmor                   :integer;//ÖÐºì¶¾×Å³Ö¾Ã¼°¼õ·ÀÁ¿£¨Êµ¼Ê´óÐ¡Îª 12 / 10£©
+    boLimitSwordLong                    :boolean;
+    nSwordLongPowerRate                 :integer;
+    nFireBoomRage                       :integer;
+    nSnowWindRange                      :integer;
+    ConsigitemIdx                       :integer;
+    ComStorageIdx                       :integer;
+    PetLimitIdx                         :integer;         //¿µ¹° 5°³ Á¦ÇÑ
+    GuildStorageIdx                     :integer;
+    GiftitemIdx                         :integer;
+    nElecBlizzardRange                  :integer;
+    nLightFlowerStruckLevel             :integer;
+    nMagTurnUndeadLevel                 :integer; //Ê¥ÑÔ¹ÖÎïµÈ¼¶ÏÞÖÆ
+    nMagTammingLevel                    :integer; //ÓÕ»óÖ®¹â¹ÖÎïµÈ¼¶ÏÞÖÆ
+    nMagTammingTargetLevel              :integer; //ÓÕ»ó¹ÖÎïÏà²îµÈ¼¶»úÂÊ£¬´ËÊý×ÖÔ½Ð¡»úÂÊÔ½´ó£»
+    nMagTammingHPRate                   :integer; //³É¹¦»úÂÊ=¹ÖÎï×î¸ßHP ³ýÒÔ ´Ë±¶ÂÊ£¬´Ë±¶ÂÊÔ½´óÓÕ»ó»úÂÊÔ½¸ß
+    nMagTammingCount                    :integer;
+    nMabMabeHitRandRate                 :integer;
+    nMabMabeHitMinLvLimit               :integer;
+    nMabMabeHitSucessRate               :integer;
+    nMabMabeHitMabeTimeRate             :integer;
+    sSabukCastleName                    :String;
+    sSabukCastleHomeMap                 :String;
+    nSabukCastleHomeX                   :integer;
+    nSabukCastleHomeY                   :integer;
+    sNammanCastleName                   :String;
+    sNammanCastleHomeMap                :String;
+    nNammanCastleHomeX                  :integer;
+    nNammanCastleHomeY                  :integer;
+    nCastleTaxRate                      :integer;
+    boGetAllNpcTax                      :boolean;
+    nHireGuardPrice                     :integer;
+    nHireArcherPrice                    :integer;
+    nCastleGoldMax                      :integer;
+    nCastleOneDayGold                   :integer;
+    nRepairDoorPrice                    :integer;
+    nRepairWallPrice                    :integer;
+    nCastleMemberPriceRate              :integer;
+    sGTHomeMap                          :String[20];
+    nGTHomeX                            :integer;
+    nGTHomeY                            :integer;
+    sGTCallMap                          :String[20];
+    sGTCallMap2                         :String[20];
+    sGTCallMap3                         :String[20];
+    nGTCallX                            :integer;
+    nGTCallY                            :integer;
+    nGTExtendFee                        :integer;
+    nGTBuyFee                           :integer;
+    nGTNumberOfPeople                   :integer;
+    sGTDeco                             :String;
+    nMaxHitMsgCount                     :integer;
+    nMaxSpellMsgCount                   :integer;
+    nMaxRunMsgCount                     :integer;
+    nMaxWalkMsgCount                    :integer;
+    nMaxTurnMsgCount                    :integer;
+    nMaxDigUpMsgCount                   :integer;
+    boSpellSendUpdateMsg                :boolean;
+    boActionSendActionMsg               :boolean;
+    boKickOverSpeed                     :boolean;
+    btSpeedControlMode                  :integer;
+    nOverSpeedKickCount                 :integer;
+    dwDropOverSpeed                     :dword;
+
+    dwRunIntervalTime                   :dword; //ÅÜ²½¼ä¸ô
+    dwWalkIntervalTime                  :dword; //×ßÂ·¼ä¸ô
+    dwTurnIntervalTime                  :dword; //»»·½Ïò¼ä¸ô
+
+    boDisableStruck                     :boolean; //²»ÏÔÊ¾ÈËÎïÍäÑü¶¯×÷
+    boDisableSelfStruck                 :boolean; //×Ô¼º²»ÏÔÊ¾ÈËÎïÍäÑü¶¯×÷
+    dwStruckTime                        :dword; //ÈËÎïÍäÑüÍ£ÁôÊ±¼ä
+    dwKillMonExpMultiple                :dword; //É±¹Ö¾­Ñé±¶Êý
+    dwRequestVersion                    :dword;
+    boHighLevelKillMonFixExp            :boolean;
+    boAddUserItemNewValue               :boolean;
+    sLineNoticePreFix                   :String;
+    sSysMsgPreFix                       :String;
+    sGuildMsgPreFix                     :String;
+    sGroupMsgPreFix                     :String;
+    sHintMsgPreFix                      :String;
+    sGMRedMsgpreFix                     :String;
+    sMonSayMsgpreFix                    :String;
+    sCustMsgpreFix                      :String;
+    sCastleMsgpreFix                    :String;
+    sGuildNotice                        :String;
+    sGuildWar                           :String;
+    sGuildAll                           :String;
+    sGuildMember                        :String;
+    sGuildMemberRank                    :String;
+    sGuildChief                         :String;
+    boKickAllUser                       :boolean;
+    boTestSpeedMode                     :boolean;
+    ClientConf                          :TClientConf;
+    nWeaponMakeUnLuckRate               :integer;
+    nWeaponMakeLuckPoint1               :integer;
+    nWeaponMakeLuckPoint2               :integer;
+    nWeaponMakeLuckPoint3               :integer;
+    nWeaponMakeLuckPoint2Rate           :integer;
+    nWeaponMakeLuckPoint3Rate           :integer;
+    boCheckUserItemPlace                :boolean;
+    SafeAreaHint                        :integer;
+    nClientKey                          :integer;
+    nLevelValueOfTaosHP                 :integer;
+    nLevelValueOfTaosHPRate             :double;
+    nLevelValueOfTaosMP                 :integer;
+    nLevelValueOfWizardHP               :integer;
+    nLevelValueOfWizardHPRate           :double;
+    nLevelValueOfWarrHP                 :integer;
+    nLevelValueOfWarrHPRate             :double;
+    nLevelValueOfAssassinHP             :integer;        //ÀÚ°´ ÇÇ
+    nLevelValueOfAssassinHPRate         :double;
+    nLevelValueOfAssassinMP             :integer;
+    nProcessMonsterInterval             :integer;
+    nExpRate                            :double;       //°æÇèÄ¡
+
+    nExChangeGameGoldRate               :double;   //È¯Àü ºñÀ² (±ÝÀü - ¹ÐÈ¯)
+    nExChangeGoldRate                   :Integer;   //È¯Àü ºñÀ² (¹ÐÈ¯ - ±ÝÀü)
+
+    boSafeCanStore: Boolean;            //¾ÈÀü °³ÀÎ»óÁ¡
+    boOpenStoreGMMode: Boolean;         //°³ÀÎ»óÁ¡Áß °ø°Ý ´çÇÏ³ª ¼³Á¤
+    boOpenStoreCheckLevel: Boolean;    //°³ÀÎ»óÁ¡ ·¹º§ Á¦ÇÑ »ç¿ë
+    nOpenStoreCheckLevel: Integer;     //°³ÀÎ»óÁ¡ ·¹º§ Á¦ÇÑ
+
+    nAllowGameGoldLevel: Integer;     //È¯ÃæÀü ·¹º§ Á¦ÇÑ
+    nAllowPCPointLevel: Integer;  
+
+    //±×·ì °æÇèÄ¡ ¼³Á¤¹ý
+    nGroupExpRate                       :Array[0..GROUPMAX] of double;
+
+    nGroupBuffHp                        :integer;
+    nGroupBuffRecHp                     :integer;
+    nGroupBuffExp                       :integer;
+    nGroupBuffPo                        :integer;
+
+
+    boIDSocketConnected                 :Boolean;
+    UserIDSection                       :TRTLCriticalSection;
+    sIDSocketRecvText                   :String;
+    IDSocket                            :integer;
+    nIDSocketRecvIncLen                 :integer;
+    nIDSocketRecvMaxLen                 :integer;
+    nIDSocketRecvCount                  :integer;
+    nIDReceiveMaxTime                   :integer;
+    nIDSocketWSAErrCode                 :integer;
+    nIDSocketErrorCount                 :integer;
+    nLoadDBCount                        :integer;
+    nLoadDBErrorCount                   :integer;
+    nSaveDBCount                        :integer;
+    nDBQueryID                          :integer;
+    UserEngineThread                    :TThreadInfo;
+    IDSocketThread                      :TThreadInfo;
+    DBSocketThread                      :TThreadInfo;
+    boDBSocketConnected                 :boolean;
+    nDBSocketRecvIncLen                 :integer;
+    nDBSocketRecvMaxLen                 :integer;
+    sDBSocketRecvText                   :String;
+    boDBSocketWorking                   :boolean;
+    nDBSocketRecvCount                  :integer;
+    nDBReceiveMaxTime                   :integer;
+    nDBSocketWSAErrCode                 :integer;
+    nDBSocketErrorCount                 :integer;
+    nM2Crc                              :integer;
+    nClientFile1_CRC                    :integer;
+    nClientFile2_CRC                    :integer;
+    nClientFile3_CRC                    :integer;
+    GlobaDyMval                         :TGlobaDyMval;
+    nCheckLicenseFail                   :integer;
+    dwCheckTick                         :LongWord;
+    nCheckFail                          :Integer;
+    boSendCurTickCount                  :Boolean;
+    dwSendWhisperTime                   :LongWord;
+    nSendWhisperPlayCount               :Integer;
+    boMoveCanDupObj                     :Boolean;
+    nProcessTick                        :integer;
+    nProcessTime                        :integer;
+    nDBSocketSendLen                    :Integer;
+    sTestGAPassword                     :String;
+    boUseSQL                            :boolean;
+    SQLHost                             :string;
+    SQLPort                             :integer;
+    SQLUsername                         :string;
+    SQLPassword                         :string;
+    SQLDatabase                         :string;
+    SQLType                             :string;
+    PosFile                             :string;
+    boDropGoldToPlayBag                 :Boolean;
+    //¿©±â¼­ºÎÅÍ ¿µ¿õ
+    btHeroNameColor                     :Byte;
+    nRecallHeroTime                     :Integer;
+    sRecallHeroHint                     :string;
+    HeroBagItemCounts                   :array[0..5] of Integer;
+    nHeroStartLevel                     :Integer;
+
+    dwHeroWarrorAttackTime: LongWord;
+    dwHeroWizardAttackTime: LongWord;
+    dwHeroTaoistAttackTime: LongWord;
+    dwHeroAssassinAttackTime: LongWord;
+
+    dwHeroItemAttackTime : LongWord;
+
+    dwHeroWalkTime : LongWord;
+
+    boHeroKillByMonstDropUseItem: Boolean;
+    boHeroKillByHumanDropUseItem: Boolean;
+    boHeroDieScatterBag: Boolean;
+
+    nHeroDieDropUseItemRate: Integer;
+    nHeroDieScatterBagRate: Integer;
+
+    vCompoundSet: TCompoundSet;
+  end;
+
+
+  TGameCommand=record
+    DATA,
+    PRVMSG,
+    ALLOWMSG,
+    BANSTORE,
+    LETSHOUT,
+    LETTRADE,
+    LETGUILD,
+    ENERGY,
+    ENDGUILD,
+    BANGUILDCHAT,
+    BANGROUPCHAT,
+    BANSYSMSG,
+    BANHEARMSG,
+    AUTHALLY,
+    ALLIANCE,
+    CANCELALLIANCE,
+    DIARY,
+    USERMOVE,
+    SEARCHING,
+    ALLOWGROUPCALL,
+    GROUPRECALLL,        //±×·ì ¸®ÄÝ..
+    ALLOWGUILDRECALL,
+    GUILDRECALLL,
+    UNLOCKSTORAGE,
+    UNLOCK,
+    LOCK,
+    PASSWORDLOCK,
+    SETPASSWORD,
+    CHGPASSWORD,
+    CLRPASSWORD,
+    UNPASSWORD,
+    MEMBERFUNCTION,
+    MEMBERFUNCTIONEX,
+
+    DEARRECALL,
+    DEARBREAK, //¿¬ÀÎ ½ºÃÄ ÇØÁ¦
+
+
+    ATTACKMODE,
+    REST,
+    TAKEONHORSE,
+    TAKEOFHORSE,
+    HUMANLOCAL,
+    MOVE,
+    POSITIONMOVE,
+    POSITIONGTMOVE,      //Àå¿ø ÀÌµ¿ ¸í·É¾î
+    HOMEMOVE, //¸¶À»ÀÌµ¿
+    REALIVEHOME, //¸¶À»ºÎÈ°
+    MASKCLEAR,
+    GMEVENT,
+    INFO,
+    MOBLEVEL,
+    MOBCOUNT,
+    HUMANCOUNT,
+    MAP,
+    KICK,
+    TING,
+    SUPERTING,
+    MAPMOVE,
+    SHUTUP,
+    RELEASESHUTUP,
+    SHUTUPLIST,
+    SVNINFO,
+    GAMEMASTER,
+    OBSERVER ,
+    SUEPRMAN,
+    LEVEL,
+    SABUKWALLGOLD,
+    RECALL,
+    REGOTO,
+    SHOWFLAG,
+    SHOWOPEN,
+    SHOWUNIT,
+    ATTACK,
+    MOB,
+    MOBNPC,
+    DELNPC,
+    ALLLOCK,
+    SFC,
+    TRACK,
+    FIVEGO,
+    MAPCLICKMOVE,
+    SHOUTGREEN,
+    SHOUTPURPLE,
+    NPCSCRIPT,
+    RECALLMOB,
+    LUCKYPOINT,
+    LOTTERYTICKET,
+    RELOADGUILD,
+    LOADGUILD,
+    RELOADLINENOTICE,
+    RELOADABUSE,
+    BACKSTEP,
+    BALL,
+    FREEPENALTY,
+    KILLDEATHZERO,     //Å³/µ¥½º ÃÊ±âÈ­
+    PKPOINT,
+    INCPKPOINT,
+    CHANGELUCK,
+    HAIR,
+    TRAINING,
+    DELETESKILL,
+    CHANGEJOB,
+    CHANGEJOBUP,//µî¼±º¯È¯
+    CHANGEGENDER,
+    NAMECOLOR,
+    MISSION,
+    MOBPLACE,
+    TRANSPARECY,
+    DELETEITEM,
+    LEVEL0,
+    CLEARMISSION,
+    SETFLAG,
+    SETOPEN,
+    SETUNIT,
+    RECONNECTION,
+    DISABLEFILTER,
+    CHGUSERFULL,
+    CHGZENFASTSTEP,
+    CONTESTPOINT,
+    STARTCONTEST,
+    ENDCONTEST,
+    ANNOUNCEMENT,
+    OXQUIZROOM,
+    GSA,
+    CHANGEITEMNAME,
+    DISABLESENDMSG,
+    ENABLESENDMSG,
+    DISABLESENDMSGLIST,
+    KILL,
+    MAKE,
+
+    SMAKE,
+    YOURMAKE,
+    BONUSPOINT,
+    DELBONUSPOINT,
+    RESTBONUSPOINT,
+    FIREBURN,
+    TESTFIRE,
+    TESTSTATUS,
+    DELGOLD,
+    ADDGOLD,
+    DELGAMEGOLD,
+    ADDGAMEGOLD,
+    GAMEGOLD,
+    GAMEPOINT,
+    PCPOINT,
+    TESTGOLDCHANGE,
+    REFINEWEAPON,
+    RELOADADMIN,
+    RELOADCOLUMN, //È«º¸´Ü
+    RELOADNPC,
+    ADDKILLPOINT, //Å³ Æ÷ÀÎÆ® ÁÖ±â ¸í·É¾î
+    ADDDEATHPOINT, //µ¥½º Æ÷ÀÎÆ® ÁÖ±â ¸í·É¾î
+    RELOADMANAGE,
+    RELOADROBOTMANAGE,
+    RELOADROBOT,
+    RELOADMONITEMS,
+    RELOADDIARY,
+    RELOADITEMDB,
+    RELOADSHOPITEMDB,  //È¯»óÁ¡ ¸®·Îµå
+    RELOADMAKEITEM,  //Á¦Á¶ ¸®·Îµå
+    RELOADFISHITEMDB, //³¬½Ã ¸®·Îµå
+    RELOADMAGICDB,
+    RELOADMONSTERDB,
+    RELOADMINMAP,
+    RELOADBIGMAP,
+    REALIVE,
+    ADJUESTLEVEL,
+    ADJUESTEXP,
+    ADDGUILD,
+    DELGUILD,
+    CHANGESABUKLORD,
+    FORCEDWALLCONQUESTWAR,
+    ADDTOITEMEVENT,
+    ADDTOITEMEVENTASPIECES,
+    ITEMEVENTLIST,
+    STARTINGGIFTNO,
+    DELETEALLITEMEVENT,
+    STARTITEMEVENT,
+    ITEMEVENTTERM,
+    ADJUESTTESTLEVEL,
+    TRAININGSKILL,
+    OPDELETESKILL,
+    CHANGEWEAPONDURA,
+    RELOADGUILDALL,
+    WHO,
+    TOTAL,
+    TESTGA,
+    MAPINFO,
+    SBKDOOR,
+
+    STARTQUEST,
+    SETPERMISSION,
+    SETCOLUMN,
+    CLEARMON,
+    RENEWLEVEL,
+    DENYIPLOGON,
+    DENYACCOUNTLOGON,
+    DENYCHARNAMELOGON,
+    DELDENYIPLOGON,
+    DELDENYACCOUNTLOGON,
+    DELDENYCHARNAMELOGON,
+    SHOWDENYIPLOGON,
+    SHOWDENYACCOUNTLOGON,
+    SHOWDENYCHARNAMELOGON,
+    VIEWWHISPER,
+    SPIRIT,
+    SPIRITSTOP,
+    SETMAPMODE,
+    SHOWMAPMODE,
+    TESTSERVERCONFIG,
+    SERVERSTATUS ,
+    TESTGETBAGITEM,
+    CLEARBAG,
+    SHOWUSEITEMINFO,
+    BINDUSEITEM,
+    MOBFIREBURN,
+    TESTSPEEDMODE,
+    GetUserItem,      //È¸¼ö
+    AddUserItem,      //ÁÖ±â
+    LOCKLOGON,
+    TRADEGT  :TGameCmd;    
+  end;
+
+  TIPLocal=procedure (sIPaddr:Pchar;sLocal:Pchar;len:integer);
+
+  pTAdminInfo=^TAdminInfo;
+  TAdminInfo=record
+    nLv:integer;
+    sChrName:String[20];
+    sIPaddr:String[15];
+  end;
+
+  pTColumnInfo=^TColumnInfo;   //È«º¸´Ü
+  TColumnInfo=record
+    nLv:integer;
+    sChrName:String[20];
+    sIPaddr:String[15];
+  end;
+
+  pTMonDrop=^TMonDrop;
+  TMonDrop=record
+    sItemName:String;
+    nDropCount:integer;
+    nNoDropCount:integer;
+    nCountLimit:integer;
+    DateBool:Boolean;
+    DateLimit:integer;
+  end;
+
+  TMonStatus=(s_KillHuman,s_UnderFire,s_Die,s_MonGen);
+
+  pTMonSayMsg=^TMonSayMsg;
+  TMonSayMsg=record
+    State:TMonStatus;
+    Color:TMsgColor;
+    nRate:integer;
+    sSayMsg:String;
+  end;
+
+
+  pTDynamicVar=^TDynamicVar;
+  TDynamicVar=record
+     sName:String;
+     VarType:TVarType;
+     nInternet:Integer;
+     sString:String;
+  end;
+
+  pTItemName=^TItemName;
+  TItemName=record
+    nMakeIndex:integer;
+    nItemIndex:integer;
+    sItemName:String;
+  end;
+
+  TLoadHuman=record
+    sAccount:String[16];
+    sChrName:String[20];
+    sUserAddr:String[15];
+    nSessionID:integer;
+  end;
+
+  pTSrvNetInfo=^TSrvNetInfo;
+  TSrvNetInfo=record
+    sIPaddr  :String;
+    nPort    :Integer;
+  end;
+
+  pTUserOpenInfo=^TUserOpenInfo;
+  TUserOpenInfo=record
+     sAccount:String[20];
+     sChrName:String[20];
+     LoadUser:TLoadDBInfo;
+     HumanRcd:THumData;
+     nResult: Integer;
+     NPC: TObject;
+  end;
+
+  pTGateObj=^TGateObj;
+  TGateObj=record
+     DEnvir:TObject;
+     nDMapX,
+     nDMapY:integer;
+     boFlag:Boolean;
+  end;
+
+  pTMapQuestInfo=^TMapQuestInfo;
+  TMapQuestInfo=record
+     nFlag:integer;
+     nValue:integer;
+     sMonName:string;
+     sItemName:String;
+     boGrouped:boolean;
+     NPC:TObject;
+  end;
+  pTPowerBlock = ^TPowerBlock;
+  TPowerBlock = array[0..100-1] of Word;
+
+
+
+  function MakeDefaultMsg (msg:smallint; Recog:integer; param, tag, series:word):TDefaultMessage;
+  function APPRfeature(cfeature:integer):Word;
+  function RACEfeature(cfeature:integer):Word;
+  function HAIRfeature(cfeature:integer):Byte;
+  function DRESSfeature(cfeature:integer):Byte;
+  function WEAPONfeature(cfeature:integer):Byte;
+  function Horsefeature(cfeature:integer):Byte;
+  function Effectfeature(cfeature:integer):Byte;
+  function MakeHumanFeature(btRaceImg,btDress,btWeapon,btHair:Byte):Integer;
+  function MakeMonsterFeature(btRaceImg:Word;wAppr:Word):Integer;
+  function StringToMailItem(Msg: String): PNMailItem;
+  function MailItemToString(Item: PNMailItem): String;
+  function Split(Deliminator: Char; Target: String): TStringList;
+  function Join(Glue: String; Target: TStringList): String; overload;
+  function Join(Glue: String; Target: TStringList; Start,Finish: Integer): String; overload;
+  function BoolToByte(boBool: Boolean): Byte;
+  function ByteToBool(boBool: Integer): Boolean;
+
+  function GetSpellPointG(UserMagic: pTUserMagic): Integer;
+
+implementation
+uses
+  Hutil32;
+
+function ByteToBool(boBool: Integer): Boolean;
+begin
+  if boBool = 1 then Result := True
+  else Result := False;
+end;
+
+function BoolToByte(boBool: Boolean): Byte;
+begin
+  if boBool then Result := 1
+  else Result := 0;
+end;
+
+function Split(Deliminator: Char; Target: String): TStringList;
+var
+  i: Integer;
+  t: String;
+begin
+  Result := TStringList.Create;
+  t := '';
+  for i := 1 to Length(Target) do begin
+    if Copy(Target,i,1) = Deliminator then begin
+      Result.Add(t);
+      t := '';
+    end
+    else t := t + Copy(Target,i,1);
+  end;
+  if t <> '' then Result.Add(t);
+end;
+
+function Join(Glue: String; Target: TStringList): String;
+var
+  i: Integer;
+begin
+  Result := '';
+
+  if Target.Count = 0 then Exit;
+
+  for i := 0 to Target.Count-1 do begin
+    if Result <> '' then Result := Result + Glue;
+    Result := Result + Target[i];
+  end;
+
+end;
+
+function Join(Glue: String; Target: TStringList; Start,Finish: Integer): String;
+var
+  i: Integer;
+begin
+  Result := '';
+
+  if Target.Count = 0 then Exit;
+
+  if Start > Target.Count - 1 then Start := Target.Count - 1;
+  if Finish > Target.Count - 1 then Finish := Target.Count - 1;
+  if Finish = -1 then Finish := Target.Count - 1;
+  if Start > Finish then begin
+    i := Finish;
+    Finish := Start;
+    Start := i;
+  end;
+
+  for i := Start to Finish do begin
+    if Result <> '' then Result := Result + Glue;
+    Result := Result + Target[i];
+  end;
+end;
+
+function MailItemToString(Item: PNMailItem): String;
+begin
+  Result := '';
+  Result := Result+#1+inttostr(Item.Id);
+  Result := Result+#1+Item.Sender;
+  Result := Result+#1+Item.Recipient;
+  Result := Result+#1+Item.Mail;
+  Result := Result+#1+inttostr(Item.Status);
+  Result := Result+#1+Item.Date;
+  Result := Result+#1;
+end;
+
+function StringToMailItem(Msg: String): PNMailItem;
+var
+  sTemp: String;
+  P,I: Integer;
+begin
+  new(Result);
+  // This will almost certainly be recoded in the future
+  sTemp := '';
+  P := 0;
+  for I := 1 to Length(Msg) do begin
+    if Msg[I] <> #1 then sTemp := sTemp+Msg[I]
+    else begin
+      Case P of
+        1: begin
+          Result.Id := strtoint(sTemp);
+        end;
+        2: begin
+          Result.Sender := sTemp;
+        end;
+        3:  begin
+          Result.Recipient := sTemp;
+        end;
+        4:  begin
+          Result.Mail := sTemp;
+        end;
+        5:  begin
+          Result.Status := strtoint(sTemp);
+        end;
+        6:  begin
+          Result.Date := sTemp;
+        end;
+      end; // Case
+      inc(P);
+      sTemp := '';
+    end;
+  end;
+end;
+
+function  MakeDefaultMsg (msg:smallint; Recog:integer; param, tag, series:word):TDefaultMessage;
+begin
+    result.Ident:=Msg;
+    result.Param:=Param;
+    result.Tag:=Tag;
+    result.Series:=Series;
+    result.Recog:=Recog;
+end;
+
+function WEAPONfeature(cfeature:integer):Byte;
+begin
+  Result:=HiByte(cfeature);
+end;
+function DRESSfeature(cfeature:integer):Byte;
+begin
+  Result:= HiByte(HiWord(cfeature));
+end;
+function APPRfeature(cfeature:integer):Word;
+begin
+  Result:=HiWord(cfeature);
+end;
+function HAIRfeature(cfeature:integer):Byte;
+begin
+  Result:=HiWord(cfeature);
+end;
+
+function RACEfeature(cfeature:integer):Word;
+begin
+  if LoByte(LoWord(cfeature)) = 0 then
+    Result := 0
+  else
+  Result:=cfeature;
+end;
+
+function Horsefeature(cfeature:integer):Byte;
+begin
+  Result:=LoByte(LoWord(cfeature));
+end;
+
+function Effectfeature(cfeature:integer):Byte;
+begin
+  Result:=HiByte(LoWord(cfeature));
+end;
+
+function MakeHumanFeature(btRaceImg,btDress,btWeapon,btHair:Byte):Integer;
+begin
+  Result:=MakeLong(MakeWord(btRaceImg,btWeapon),MakeWord(btHair,btDress));
+end;
+
+function MakeMonsterFeature(btRaceImg:Word;wAppr:Word):Integer;
+begin
+  Result:=MakeLong(btRaceImg,wAppr);
+end;
+
+function GetSpellPointG(UserMagic: pTUserMagic): Integer;
+begin
+  Result := ROUND(UserMagic.MagicInfo.wSpell / (UserMagic.MagicInfo.btTrainLv + 1) * (UserMagic.btLevel + 1)) +
+    UserMagic.MagicInfo.btDefSpell;
+end;
+
+{---- Adjust global SVN revision ----}
+initialization
+  ////SVNRevision('$Id: Grobal2.pas 596 2007-04-11 00:14:13Z sean $');
+end.
+

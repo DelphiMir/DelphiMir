@@ -1,0 +1,62 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{3f73d3f0-259a-4236-8a35-12d46057a792}</ProjectGuid>
+    <MainSource>GameCenter.dpr</MainSource>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+    <DCC_DependencyCheckOutputName>..\..\Release\GameCenter.exe</DCC_DependencyCheckOutputName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_DebugInformation>False</DCC_DebugInformation>
+    <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+    <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    <DCC_Define>RELEASE</DCC_Define>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_Define>DEBUG</DCC_Define>
+    <DCC_ExeOutput>..\..\Release</DCC_ExeOutput>
+    <DCC_DcuOutput>..\..\Build\GameCenter</DCC_DcuOutput>
+    <DCC_ObjOutput>..\..\Build\GameCenter</DCC_ObjOutput>
+    <DCC_HppOutput>..\..\Build\GameCenter</DCC_HppOutput>
+    <DCC_UnitSearchPath>..\..\Source\Common;..\..\Source\Common\Include;..\..\Source\Common\Object;..\..\Component\JSocket;..\..\Component\VCLZip.Pro.v3.05.b1.FS.D7</DCC_UnitSearchPath>
+    <DCC_ResourcePath>..\..\Source\Common;..\..\Source\Common\Include;..\..\Source\Common\Object;..\..\Component\JSocket;..\..\Component\VCLZip.Pro.v3.05.b1.FS.D7</DCC_ResourcePath>
+    <DCC_ObjPath>..\..\Source\Common;..\..\Source\Common\Include;..\..\Source\Common\Object;..\..\Component\JSocket;..\..\Component\VCLZip.Pro.v3.05.b1.FS.D7</DCC_ObjPath>
+    <DCC_IncludePath>..\..\Source\Common;..\..\Source\Common\Include;..\..\Source\Common\Object;..\..\Component\JSocket;..\..\Component\VCLZip.Pro.v3.05.b1.FS.D7</DCC_IncludePath>
+    <DCC_Hints>False</DCC_Hints>
+    <DCC_SYMBOL_DEPRECATED>False</DCC_SYMBOL_DEPRECATED>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <Borland.Personality>Delphi.Personality</Borland.Personality>
+    <Borland.ProjectType>VCLApplication</Borland.ProjectType>
+    <BorlandProject>
+<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">False</VersionInfo><VersionInfo Name="MajorVer">2015</VersionInfo><VersionInfo Name="MinorVer">5</VersionInfo><VersionInfo Name="Release">26</VersionInfo><VersionInfo Name="Build">1</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">2057</VersionInfo><VersionInfo Name="CodePage">1252</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName">JackMir2</VersionInfoKeys><VersionInfoKeys Name="FileDescription">Mir Game Centre</VersionInfoKeys><VersionInfoKeys Name="FileVersion">2015.5.26.1</VersionInfoKeys><VersionInfoKeys Name="InternalName"></VersionInfoKeys><VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys><VersionInfoKeys Name="ProductName"></VersionInfoKeys><VersionInfoKeys Name="ProductVersion">2015.5.26.1</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Excluded_Packages>
+      <Excluded_Packages Name="$(BDS)\bin\dcloffice2k100.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+      <Excluded_Packages Name="$(BDS)\bin\dclofficexp100.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+      <Excluded_Packages Name="C:\Users\Public\Documents\RAD Studio\5.0\Bpl\JclDebugExpert110.bpl">JCL Debug IDE extension</Excluded_Packages>
+    </Excluded_Packages><Source><Source Name="MainSource">GameCenter.dpr</Source></Source></Delphi.Personality></BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
+  <ItemGroup>
+    <DelphiCompile Include="GameCenter.dpr">
+      <MainSource>MainSource</MainSource>
+    </DelphiCompile>
+    <DCCReference Include="..\Common\Common.pas" />
+    <DCCReference Include="..\Common\EncryptUnit.pas" />
+    <DCCReference Include="..\Common\Grobal2.pas" />
+    <DCCReference Include="..\Common\HUtil32.pas" />
+    <DCCReference Include="DataBackUp.pas" />
+    <DCCReference Include="GLoginServer.pas">
+      <Form>frmLoginServerConfig</Form>
+    </DCCReference>
+    <DCCReference Include="GLoginServerRouteSet.pas">
+      <Form>frmLoginServerRouteSet</Form>
+    </DCCReference>
+    <DCCReference Include="GMain.pas">
+      <Form>frmMain</Form>
+    </DCCReference>
+    <DCCReference Include="GShare.pas" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{32e80cd2-7e43-4e10-a38a-495926579b96}</ProjectGuid>
+    <MainSource>LoginGate.dpr</MainSource>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+    <DCC_DependencyCheckOutputName>..\..\Release\LoginGate\LoginGate.exe</DCC_DependencyCheckOutputName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_DebugInformation>False</DCC_DebugInformation>
+    <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+    <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    <DCC_ExeOutput>..\..\Release\LoginGate\</DCC_ExeOutput>
+    <DCC_DcuOutput>..\..\Build\LoginGate\</DCC_DcuOutput>
+    <DCC_ObjOutput>..\..\Build\LoginGate\</DCC_ObjOutput>
+    <DCC_HppOutput>..\..\Build\LoginGate\</DCC_HppOutput>
+    <DCC_UnitSearchPath>..\Common\</DCC_UnitSearchPath>
+    <DCC_ResourcePath>..\Common\</DCC_ResourcePath>
+    <DCC_ObjPath>..\Common\</DCC_ObjPath>
+    <DCC_IncludePath>..\Common\</DCC_IncludePath>
+    <DCC_Define>RELEASE</DCC_Define>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_ExeOutput>..\..\Release\LoginGate\</DCC_ExeOutput>
+    <DCC_DcuOutput>..\..\Build\LoginGate\</DCC_DcuOutput>
+    <DCC_ObjOutput>..\..\Build\LoginGate\</DCC_ObjOutput>
+    <DCC_HppOutput>..\..\Build\LoginGate\</DCC_HppOutput>
+    <DCC_UnitSearchPath>..\Common\</DCC_UnitSearchPath>
+    <DCC_ResourcePath>..\Common\</DCC_ResourcePath>
+    <DCC_ObjPath>..\Common\</DCC_ObjPath>
+    <DCC_IncludePath>..\Common\</DCC_IncludePath>
+    <DCC_Define>DEBUG</DCC_Define>
+    <DCC_Hints>False</DCC_Hints>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <Borland.Personality>Delphi.Personality</Borland.Personality>
+    <Borland.ProjectType>VCLApplication</Borland.ProjectType>
+    <BorlandProject>
+<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">False</VersionInfo><VersionInfo Name="MajorVer">10</VersionInfo><VersionInfo Name="MinorVer">9</VersionInfo><VersionInfo Name="Release">25</VersionInfo><VersionInfo Name="Build">1</VersionInfo><VersionInfo Name="Debug">True</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1042</VersionInfo><VersionInfo Name="CodePage">949</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName">KoreaMir2</VersionInfoKeys><VersionInfoKeys Name="FileDescription">LoginGate</VersionInfoKeys><VersionInfoKeys Name="FileVersion">10.9.25.1</VersionInfoKeys><VersionInfoKeys Name="InternalName">미르의전설2</VersionInfoKeys><VersionInfoKeys Name="LegalCopyright">http://mirucc.ohpy.com/main</VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks">미르의전설2</VersionInfoKeys><VersionInfoKeys Name="OriginalFilename">미르의전설2</VersionInfoKeys><VersionInfoKeys Name="ProductName">KoreaMir2</VersionInfoKeys><VersionInfoKeys Name="ProductVersion">10.9.25.1</VersionInfoKeys><VersionInfoKeys Name="Comments">개발자 이 외 판매불가</VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">LoginGate.dpr</Source></Source></Delphi.Personality></BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
+  <ItemGroup>
+    <DelphiCompile Include="LoginGate.dpr">
+      <MainSource>MainSource</MainSource>
+    </DelphiCompile>
+    <DCCReference Include="..\Common\Grobal2.pas" />
+    <DCCReference Include="..\Common\HUtil32.pas" />
+    <DCCReference Include="..\Common\svn.pas" />
+    <DCCReference Include="..\SDK\SDK.pas" />
+    <DCCReference Include="GateShare.pas" />
+    <DCCReference Include="GeneralConfig.pas">
+      <Form>frmGeneralConfig</Form>
+    </DCCReference>
+    <DCCReference Include="IPaddrFilter.pas">
+      <Form>frmIPaddrFilter</Form>
+    </DCCReference>
+    <DCCReference Include="Main.pas">
+      <Form>FrmMain</Form>
+    </DCCReference>
+  </ItemGroup>
+</Project>

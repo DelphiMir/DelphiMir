@@ -1,0 +1,154 @@
+object InfoFrm: TInfoFrm
+  Left = 374
+  Top = 277
+  Width = 203
+  Height = 217
+  Caption = 'Korea Mir2(KM2)'
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  Icon.Data = {
+    0000010001002020100000000000E80200001600000028000000200000004000
+    0000010004000000000080020000000000000000000000000000000000000000
+    0000000080000080000000808000800000008000800080800000C0C0C0008080
+    80000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF000000
+    0000000000888888888888888888000000000000088888888888888888880000
+    00000000000000000000000008800000000000000B3B3B3B3B3B3B3B08000000
+    0000000000B3B3B3B3B3B3B3B0000000000000000F0B3B3B3B3B3B3B30000000
+    000000000B03B3B3B3B3B3B3B3000000000000000FB03B3B3B3B3B3B3B000000
+    000000000BF0B3B3B3B3B3B3B3B00000000000000FBF0B3B3B3B3B3B3B300000
+    000000000BFB00000000000000000000000000000FBFBFBFBFBFBFB000000000
+    000000000BFBFBFBFBFBFB0E000000000000000000777777000000EEE0000000
+    000000000077777700000EEEEE00008888888888880000000000EEEEEEE00888
+    8888888888888800000000EEE00000000000000000008000000000EEE0000B3B
+    3B3B3B3B3B300000000000EEE00000B3B3B3B3B3B3B30000070000EEE0000F0B
+    3B3B3B3B3B3B0000770000EEE0000B03B3B3B3B3B3B3B007777770EEE0000FB0
+    3B3B3B3B3B3B3077777770EE00000BF0B3B3B3B3B3B3B307777770E000000FBF
+    0B3B3B3B3B3B3B007700000000000BFB00000000000000000700000000000FBF
+    BFBFBFBFBFBF00000000000000000BFBFBFBFBFBFBFB000000000000000000EE
+    EEEE00000000000000000000000000EEEEEE0000000000000000000000000000
+    000000000000000000000000000000000000000000000000000000000000FFFC
+    0000FFF80000FFF00001FFF00003FFF00003FFF00003FFF00001FFF00001FFF0
+    0000FFF00000FFF00000FFF0000FFFF00007FFF00003FFF80701C0000E008000
+    3E0000007F830000F983000071830000600300000003000000070000000F0000
+    001F000011FF000079FF00007FFF00007FFF807FFFFFC0FFFFFFFFFFFFFF}
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  object dxContainer1: TdxContainer
+    Left = 8
+    Top = 8
+    Width = 179
+    Height = 131
+    BoundLines = [blLeft, blTop, blRight, blBottom]
+    Caption = 'dxContainer1'
+    object Label1: TLabel
+      Left = 12
+      Top = 14
+      Width = 49
+      Height = 13
+      AutoSize = False
+      Caption = 'HOST : '
+    end
+    object Label2: TLabel
+      Left = 12
+      Top = 36
+      Width = 41
+      Height = 13
+      AutoSize = False
+      Caption = 'PORT : '
+    end
+    object Label3: TLabel
+      Left = 11
+      Top = 60
+      Width = 43
+      Height = 13
+      AutoSize = False
+      Caption = 'NAME : '
+    end
+    object Label4: TLabel
+      Left = 14
+      Top = 83
+      Width = 38
+      Height = 13
+      AutoSize = False
+      Caption = 'PASS : '
+    end
+    object Label5: TLabel
+      Left = 14
+      Top = 106
+      Width = 40
+      Height = 13
+      AutoSize = False
+      Caption = 'PATH : '
+    end
+    object dxDNEdit1: TdxDNEdit
+      Left = 51
+      Top = 9
+      Width = 118
+      Height = 21
+      ImeName = #54620#44397#50612' '#51077#47141' '#49884#49828#53596' (IME 2000)'
+      TabOrder = 0
+    end
+    object dxDNEdit2: TdxDNEdit
+      Left = 51
+      Top = 32
+      Width = 118
+      Height = 21
+      ImeName = #54620#44397#50612' '#51077#47141' '#49884#49828#53596' (IME 2000)'
+      TabOrder = 1
+    end
+    object dxDNEdit3: TdxDNEdit
+      Left = 51
+      Top = 55
+      Width = 118
+      Height = 21
+      ImeName = #54620#44397#50612' '#51077#47141' '#49884#49828#53596' (IME 2000)'
+      TabOrder = 2
+    end
+    object dxDNEdit4: TdxDNEdit
+      Left = 51
+      Top = 78
+      Width = 118
+      Height = 21
+      ImeName = #54620#44397#50612' '#51077#47141' '#49884#49828#53596' (IME 2000)'
+      PasswordChar = '*'
+      TabOrder = 3
+    end
+    object dxDNEdit5: TdxDNEdit
+      Left = 51
+      Top = 101
+      Width = 118
+      Height = 21
+      ImeName = #54620#44397#50612' '#51077#47141' '#49884#49828#53596' (IME 2000)'
+      TabOrder = 4
+    end
+  end
+  object upCheck: TdxCheckbox
+    Left = 8
+    Top = 141
+    Width = 161
+    Height = 17
+    Caption = #51077#47141#54980' '#50629#45936#51060#53944' '#49892#54665
+    TabOrder = 1
+  end
+  object dxButton1: TdxButton
+    Left = 34
+    Top = 165
+    Height = 19
+    OnClick = dxButton1Click
+    Caption = #54869' '#51064
+    TabOrder = 2
+  end
+  object dxButton2: TdxButton
+    Left = 114
+    Top = 164
+    Height = 19
+    OnClick = dxButton2Click
+    Caption = #52712' '#49548
+    TabOrder = 3
+  end
+end

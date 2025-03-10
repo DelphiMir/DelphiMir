@@ -1,0 +1,120 @@
+unit UnitRegisterSoft;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ExtCtrls, ShellAPI, Buttons, Grobal2, ComCtrls;
+
+type
+  TfrmRegister = class(TForm)
+    Panel1: TPanel;
+    EditRegHWInfo: TEdit;
+    Label4: TLabel;
+    EditRegUserIPAddr: TEdit;
+    lCode: TLabel;
+    lName: TLabel;
+    Label5: TLabel;
+    EditChiShu: TEdit;
+    Label6: TLabel;
+    EditTianShu: TEdit;
+    Label7: TLabel;
+    EditProductName: TLabel;
+    EditUpDateTime: TLabel;
+    EditVersion: TLabel;
+    EditWebSite: TLabel;
+    EditBbsSite: TLabel;
+    EditCopyright: TLabel;
+    Editkeyxxi: TLabel;
+    EditRegCodeKey: TEdit;
+    DateTimePicker1: TDateTimePicker;
+//    procedure CloseButtonClick(Sender: TObject);
+//    procedure RegSoftButtonClick(Sender: TObject);
+//    procedure btnRegPasteClick(Sender: TObject);
+//    procedure DeleteSelf;
+//    procedure RegServerButtonClick(Sender: TObject);
+  private
+    { Private declarations }
+    procedure RefRegInfo();
+  public
+    { Public declarations }
+    procedure Open();
+  end;
+var
+  frmRegister               : TfrmRegister;
+
+implementation
+
+uses M2Share, SDK, EDcode, WinlicenseSDK;
+
+{$R *.dfm}
+
+procedure TfrmRegister.Open();
+begin
+  RefRegInfo();
+  ShowModal;
+end;
+
+procedure TfrmRegister.RefRegInfo();
+var
+  nStatus                   : Integer;
+  MachineId                 : array[0..100] of char;
+  RegName                   : array[0..255] of char;
+  CompanyName               : array[0..255] of char;
+  CustomData                : array[0..255] of char;
+//  TrialDate                 : TSystemTime;
+  jiami                     : string;
+  TrialDate                 : SYSTEMTIME;
+begin
+  EditProductName.caption:=DecodeString(DecodeString(g_sProductName));  //ÓÎÏ·°éËæÎÒMDB°æ´«ÆæÒýÇæ
+  EditVersion.caption:=DecodeString(DecodeString(g_sVersion)); //³ÌÐò°æ±¾: V5.18 Build 20070607(Ãâ·Ñ°æ)
+  EditUpDateTime.caption:=DecodeString(DecodeString(g_sUpDateTime)); //±àÒëÊ±¼ä: 2007/06/07
+  EditWebSite.caption:=DecodeString(DecodeString(g_sWebSite)); //³ÌÐòÍøÕ¾: http://www.uc845.com
+  //EditBbsSite.caption:=DecodeString(DecodeString(g_sbbsSite)); //³ÌÐòÂÛÌ³: http://bbs.uc845.com
+  EditCopyright.caption:=DecodeString(DecodeString(g_sProgram)); //Copyright (C) 2005-2007 DraGon Corporation
+  //Editkeyxxi.caption:=DecodeString(DecodeString(g_sIcqSite)); //×¢²áÊÚÈ¨: Çë½«[Ó²¼þÐÅÏ¢/×¢²á±êÊ¶]·¢ËÍ¸ø×÷Õß
+  //UCEncode(GetLocalIP,jiami);
+
+  //nStatus := 0;
+  try
+    {$I ..\..\Tools\WinLicenseV2.0.8.0\WinlicenseSDK\Include\Delphi\Macros\EnCode_Start.inc}
+    WLHardwareGetID(MachineId);
+    EditRegHWInfo.Text := MachineId;
+    EditTianShu.Text := IntToStr(WLTrialDaysLeft);
+    EditChiShu.Text := IntToStr(WLTrialExecutionsLeft);
+    EditRegCodeKey.Text := '';
+    nStatus := WLRegGetStatus(nStatus);
+    case nStatus of
+      0: Caption := WLStringDecrypt('¼ÒÇÁÆ®µî·Ï [»ç¿ë¹æ½Ä]');
+      1: Caption := WLStringDecrypt('¼ÒÇÁÆ®µî·Ï [µî·ÏµÊ]');
+      2: Caption := WLStringDecrypt('¼ÒÇÁÆ®µî·Ï [ÆÄÀÏ¿¡·¯]');
+      3: Caption := WLStringDecrypt('¼ÒÇÁÆ®µî·Ï [ÆÄÀÏ¿¡·¯]');
+      4: Caption := WLStringDecrypt('¼ÒÇÁÆ®µî·Ï [ÇÏµå¿þ¾îº¯È¯]');
+      5: Caption := WLStringDecrypt('¼ÒÇÁÆ®µî·Ï [ÆÄÀÏ»ç¿ë±â°£¸¸·á)');
+    end;
+    if nStatus = 1 then begin
+      WLRegGetLicenseInfo(RegName, CompanyName, CustomData);
+      EditRegCodeKey.Text := RegName;
+      EditRegUserIPAddr.Text := CompanyName;{RegName;}
+      EditRegCodeKey.Color:= clBtnFace;
+      EditRegCodeKey.ReadOnly:= True;
+      EditRegCodeKey.ParentCtl3D:= False;
+      EditRegCodeKey.ParentFont:= False;
+      EditTianShu.Text := '¼³Á¤µÇÁö ¾ÊÀ½';
+      EditChiShu.Text := '¼³Á¤µÇÁö ¾ÊÀ½';
+      FillChar(TrialDate, SizeOf(SYSTEMTIME), #0);
+      WLRegExpirationDate(Addr(TrialDate));
+      DateTimePicker1.DateTime := SystemTimeToDateTime(TrialDate);
+
+    end else begin
+    //  EditRegUserIPAddr.Text := jiami;
+      FillChar(TrialDate, SizeOf(SYSTEMTIME), #0);
+      WLTrialExpirationDate(Addr(TrialDate));
+      DateTimePicker1.DateTime := SystemTimeToDateTime(TrialDate);
+    end;
+    {$I ..\..\Tools\WinLicenseV2.0.8.0\WinlicenseSDK\Include\Delphi\Macros\EnCode_End.inc}
+  except
+  end;
+end;
+
+end.

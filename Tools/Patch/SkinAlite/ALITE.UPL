@@ -1,0 +1,53 @@
+[DSP upload]
+File Name=alite.zip
+Replace File=alite.zip
+File Status=Freeware
+Full Source Included=N
+Delphi 1.0x=N
+Delphi 2.0x=N
+Delphi 3.0x=N
+Delphi 4.0x=N
+Delphi 5.0x=Y
+Delphi 6.0x=Y
+C++ Builder 1.0x=N
+C++ Builder 3.0x=N
+C++ Builder 4.0x=N
+C++ Builder 5.0x=N
+Kylix=N
+Version=3.73
+count=7
+1=Package contains ten absolutely free and fully-functional components 
+2=from the AlphaControls package (TsSkinManager, TsSkinProvider, 
+3=TsButton, TsBitBtn, TsPanel, TsEdit, TsScrollBar, TsLabel, 
+4=TsWebLabel and TsCheckBox). By using these components you can 
+5=see the basic ideas behind AlphaControls which distinguish these 
+6=components from similar packages. Small demo with sources included 
+7=in this package.
+Note=
+Additional info=
+Category=Components Collection
+Platform=
+Group=Component/Code
+[Versions available]
+Delphi 1.0x=
+Delphi 2.0x=
+Delphi 3.0x=
+Delphi 4.0x=
+Delphi 5.0x=
+Delphi 6.0x=
+C++ Builder 1.0x=
+C++ Builder 3.0x=
+C++ Builder 4.0x=
+C++ Builder 5.0x=
+Kylix=
+[DSP Support]
+DSP Support=Y
+[Uploader_1]
+Author name=Serge Goncharov
+Contact=
+Author E-mail=sstyle2002@mail.ru
+Author URL=http://www.alphaskins.com
+count=1
+1=AlphaControls for Delphi 5/6/7
+Author Section=VCL creator
+UpdateDSP=Y

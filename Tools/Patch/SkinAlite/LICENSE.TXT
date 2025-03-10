@@ -1,0 +1,31 @@
+AlphaControls Lite for Borland Delphi 5/6/7
+======================================
+Copyright (c) ArtTech software 2004
+e-mail: support@alphaskins.com
+site:   http://www.alphaskins.com
+
+SOFTWARE LICENSE AGREEMENT
+
+This package is BeerWare for personal use. No responsibilities taken 
+whatsoever.
+
+BeerWare means:
+
+1) If you want to use this component for commercial use or
+2) if you want to use this component for personal use and think that this 
+component is worth to do it, you have to send us 10 bottles of beer 
+(or the money for it)
+
+Liability disclaimer:
+
+THIS SOFTWARE IS DISTRIBUTED "AS IS" AND WITHOUT 
+WARRANTIES AS TO PERFORMANCE OF MERCHANTABILITY 
+OR ANY OTHER WARRANTIES WHETHER EXPRESSED OR 
+IMPLIED. YOU USE IT AT YOUR OWN RISK. THE AUTHOR 
+WILL NOT BE LIABLE FOR DATA LOSS, DAMAGES, LOSS 
+OF PROFITS OR ANY OTHER KIND OF LOSS WHILE USING 
+OR MISUSING THIS SOFTWARE.
+
+If you have any questions regarding this agreement, 
+please contact me at my e-mail addresses: 
+support@alphaskins.com

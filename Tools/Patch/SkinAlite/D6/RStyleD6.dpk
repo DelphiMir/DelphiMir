@@ -1,0 +1,70 @@
+package RStyleD6;
+{$R *.res}
+{$R 'acnt.dcr'}
+{$ALIGN 8}
+{$ASSERTIONS OFF}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE ON}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'AlphaControls run-time library'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  vcl,
+  vcljpg,
+  vclx;
+
+contains
+  sStyleEdits in 'sStyleEdits.pas',
+  sEdit in 'sEdit.pas',
+  sCheckedControl in 'sCheckedControl.pas',
+  sPanel in 'sPanel.pas',
+  sConst in 'sConst.pas',
+  sCheckbox in 'sCheckbox.pas',
+  sGraphUtils in 'sGraphUtils.pas',
+  sColors in 'sColors.pas',
+  sCustomButton in 'sCustomButton.pas',
+  sUtils in 'sUtils.pas',
+  sVclUtils in 'sVclUtils.pas',
+  sMessages in 'sMessages.pas',
+  sStylePassive in 'sStylePassive.pas',
+  sCustomLabel in 'sCustomLabel.pas',
+  sStyleUtil in 'sStyleUtil.pas',
+  sStyleActive in 'sStyleActive.pas',
+  sButtonControl in 'sButtonControl.pas',
+  sStyleSimply in 'sStyleSimply.pas',
+  sDefaults in 'sDefaults.pas',
+  sGradient in 'sGradient.pas',
+  sSkinProps in 'sSkinProps.pas',
+  sBorders in 'sBorders.pas',
+  sCommonData in 'sCommonData.pas',
+  sMaskData in 'sMaskData.pas',
+  sMDIForm in 'sMDIForm.pas',
+  sScrollBar in 'sScrollBar.pas',
+  sSkinManager in 'sSkinManager.pas',
+  sSkinMenus in 'sSkinMenus.pas',
+  sAlphaGraph in 'sAlphaGraph.pas',
+  sSkinProvider in 'sSkinProvider.pas',
+  sStoreUtils in 'sStoreUtils.pas',
+  sStrings in 'sStrings.pas',
+  sStatusBar in 'sStatusBar.pas',
+  sDialogs;
+
+end.

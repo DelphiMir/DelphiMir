@@ -1,0 +1,46 @@
+package DStyleD7;
+{$R *.res}
+{$R 'acnt.dcr'}
+{$ALIGN 8}
+{$ASSERTIONS OFF}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'AlphaControls'}
+{$DESIGNONLY}
+{$IMPLICITBUILD ON}
+
+requires
+  DesignIDE,
+  RStyleD7,
+  vcl,
+  rtl,
+  vclactnband,
+  vclx,
+  dclstd,
+  vcljpg;
+
+contains
+  sRegisterIt in 'sRegisterIt.pas',
+  sGradEditor in 'sGradEditor.pas',
+  sGradBuilder in 'sGradBuilder.pas' {GradBuilder},
+  sPropEditors in 'sPropEditors.pas',
+  sInternalSkins in 'sInternalSkins.pas' {FormInternalSkins};
+
+end.
